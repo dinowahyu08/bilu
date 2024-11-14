@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="google_api_key">AIzaSyCW4eXnxrk_pI1iiMaL3eJSgQOAsg-gCMQ</string>
+    <string name="google_app_id">1:877381791108:android:915dca9062a108e113c1d1</string>
+    <string name="gcm_defaultSenderId">877381791108</string>
+    <string name="project_id">bilu-f9a54</string>
+    <string name="firebase_database_url">https://bilu-f9a54.firebaseio.com</string>
+    <string name="default_web_client_id">[YOUR_CLIENT_ID]</string> <!-- opsional -->
+</resources>
