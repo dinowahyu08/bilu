@@ -3,8 +3,9 @@ import 'package:bilu2/main.dart';
 import 'package:bilu2/page/HomeClient.dart';
 import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; 
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,9 +15,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // Menggunakan FirebaseAnalytics.instance untuk mendapatkan instance
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-
   List<dynamic> _users = [];
   bool _obscurePassword = true;
 
@@ -24,15 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     loadUsers(); // Memuat data pengguna dari server
-  }
-
-  String _getUserName(String username) {
-    for (var user in _users) {
-      if (user['username'] == username) {
-        return user['name']; // Kembalikan nama pengguna jika username cocok
-      }
-    }
-    return ''; // Jika tidak ada yang cocok
   }
 
   Future<void> loadUsers() async {
@@ -68,6 +61,15 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('loggedInUser', username);
       print('Login $username');
+
+      // Log event ke Firebase Analytics
+      await _analytics.logEvent(
+        name: 'login',
+        parameters: {
+          'username': username,
+          'name': name,
+        },
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.green,

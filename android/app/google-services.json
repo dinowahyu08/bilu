@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "49794005887",
-    "project_id": "bilu-2fa55",
-    "storage_bucket": "bilu-2fa55.firebasestorage.app"
+    "project_number": "877381791108",
+    "project_id": "bilu-f9a54",
+    "storage_bucket": "bilu-f9a54.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:49794005887:android:d918a7e087664e1759784a",
+        "mobilesdk_app_id": "1:877381791108:android:915dca9062a108e113c1d1",
         "android_client_info": {
           "package_name": "com.example.bilu2"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAy6tHvPAuRw0S8x9CxctcVKW7Je9-GWE8"
+          "current_key": "AIzaSyCW4eXnxrk_pI1iiMaL3eJSgQOAsg-gCMQ"
         }
       ],
       "services": {
