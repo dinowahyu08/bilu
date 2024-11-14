@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> loadUsers() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/users.json')); // Ganti dengan URL server
+      final response = await http.get(Uri.parse('http://192.168.100.7:8000/users.json')); // Ganti dengan URL server
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
