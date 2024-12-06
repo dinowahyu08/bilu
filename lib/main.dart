@@ -15,30 +15,30 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 
-Future<void> uploadDataToFirestore() async {
-  try {
-    // Baca file JSON dari assets
-    String jsonString = await rootBundle.loadString('assets/users.json');
-    Map<String, dynamic> jsonData = json.decode(jsonString);
+// Future<void> uploadDataToFirestore() async {
+//   try {
+//     // Baca file JSON dari assets
+//     String jsonString = await rootBundle.loadString('assets/users.json');
+//     Map<String, dynamic> jsonData = json.decode(jsonString);
 
-    // Ambil koleksi users dari JSON
-    List<dynamic> users = jsonData['users'];
+//     // Ambil koleksi users dari JSON
+//     List<dynamic> users = jsonData['users'];
 
-    // Referensi ke koleksi Firestore
-    CollectionReference usersCollection =
-        FirebaseFirestore.instance.collection('users');
+//     // Referensi ke koleksi Firestore
+//     CollectionReference usersCollection =
+//         FirebaseFirestore.instance.collection('users');
 
-    // Loop untuk memasukkan setiap user ke Firestore
-    for (var user in users) {
-      await usersCollection.doc(user['username']).set(user);
-      print('Data untuk ${user['username']} berhasil ditambahkan.');
-    }
+//     // Loop untuk memasukkan setiap user ke Firestore
+//     for (var user in users) {
+//       await usersCollection.doc(user['username']).set(user);
+//       print('Data untuk ${user['username']} berhasil ditambahkan.');
+//     }
 
-    print('Semua data berhasil diunggah.');
-  } catch (e) {
-    print('Terjadi kesalahan: $e');
-  }
-}
+//     print('Semua data berhasil diunggah.');
+//   } catch (e) {
+//     print('Terjadi kesalahan: $e');
+//   }
+// }
 Future<void> main() async {
 
 
@@ -55,8 +55,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AnnouncementProvider()),
           ChangeNotifierProvider(create: (_) => VideoProvider()),
   ], child: MyApp()));
-  await uploadDataToFirestore();
-  print('firestore done');
+  // await uploadDataToFirestore();
+  // print('firestore done');
 }
 
 class CheckAuth extends StatelessWidget {
