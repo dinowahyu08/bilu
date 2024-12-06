@@ -23,7 +23,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     // Construct video URL with the provided idVideo
     videoUrl = "https://www.youtube.com/embed/${widget.idVideo}?autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1";
-    print(videoUrl);
+    print('$videoUrl');
     // Set the device to landscape mode when the page opens
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,

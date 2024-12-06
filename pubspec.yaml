@@ -7,15 +7,19 @@ environment:
   sdk: ">=3.4.3 <4.0.0"
 
 dependencies:
+  cloud_firestore: ^5.5.1
   firebase_analytics: ^11.3.3
+  firebase_auth: ^5.3.3
   firebase_core: ^3.5.0
+  firebase_database: ^11.1.6
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
   http: null
-  image_picker: 
+  image_picker: null
   intl: null
   local_auth: null
+  provider: ^6.1.2
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
   webview_flutter: ^4.0.1

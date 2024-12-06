@@ -1,15 +1,12 @@
 import 'dart:convert';
-import 'package:bilu2/page/editPassword.dart';
+import 'package:bilu2/page/changePassword.dart';
 import 'package:bilu2/page/editProfile.dart';
-import 'package:bilu2/page/login.dart';
 import 'package:bilu2/page/splashScreen.dart';
+import 'package:bilu2/provider/userProvider.dart';
 import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-
 
 class ProfilePage extends StatefulWidget {
   final String username;
@@ -20,61 +17,21 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Map<String, dynamic>? user;
-
   @override
   void initState() {
     super.initState();
-    _loadUserFromServer();
+    Provider.of<UserProvider>(context, listen: false).loadUserData();
   }
 
-  Future<void> _loadUserFromServer() async {
-    try {
-      final response = await http.get(Uri.parse(
-          'http://192.168.100.7:8000/users.json'));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        user = data['users'].firstWhere(
-            (user) => user['username'] == widget.username,
-            orElse: () => null);
-        setState(() {});
-      } else {
-        print('Failed to load user data from server: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error loading user data: $e');
-    }
-  }
-
-
-String formatRupiah(String amount) {
-  final numberFormat = NumberFormat.currency(
-    locale: 'id_ID', // Indonesian locale
-    symbol: 'Rp ',    // Currency symbol
-    decimalDigits: 0, // Set to 0 if you don't want decimal places
-  );
-  
-  return numberFormat.format(int.parse(amount)); // Convert to int if the amount is a string
-}
-
-  String calculateTotalSavings() {
-    int total = 0;
-    if (user != null && user!['savings'] != null) {
-      for (var entry in user!['savings']['history']) {
-        total += int.parse(entry['amount']);
-      }
-    }
-    return formatRupiah(total.toString());
-  }
   @override
   Widget build(BuildContext context) {
-    if (user == null) {
+    final userProvider = Provider.of<UserProvider>(context);
+
+    if (userProvider.username.isEmpty) {
       return Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
-     String totalSavings = calculateTotalSavings();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -111,8 +68,8 @@ String formatRupiah(String amount) {
                         decoration: BoxDecoration(
                             color: whiteColor,
                             borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(35),
-                            topRight: Radius.circular(35))),
+                                topLeft: Radius.circular(35),
+                                topRight: Radius.circular(35))),
                         width: 350,
                         child: Padding(
                           padding: const EdgeInsets.all(20),
@@ -126,7 +83,7 @@ String formatRupiah(String amount) {
                                     children: [
                                       CircleAvatar(
                                         backgroundImage:
-                                            NetworkImage(user!['photoUrl']),
+                                            NetworkImage(userProvider.photoUrl),
                                         radius: 50,
                                       ),
                                       Padding(
@@ -137,7 +94,7 @@ String formatRupiah(String amount) {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              user!['name'],
+                                              userProvider.name,
                                               style: boldTextStyle.copyWith(
                                                   color: blackcolor,
                                                   fontSize: 18),
@@ -149,7 +106,8 @@ String formatRupiah(String amount) {
                                                   fontSize: 12),
                                             ),
                                             Text(
-                                              totalSavings,
+                                              userProvider
+                                                  .calculateTotalSavings(),
                                               style: semiBoldTextStyle.copyWith(
                                                   color: blackcolor,
                                                   fontSize: 14),
@@ -176,65 +134,65 @@ String formatRupiah(String amount) {
                                     color: blackcolor, fontSize: 14),
                               ),
                               SizedBox(height: 30),
-                              TextButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChangePasswordPage(username: widget.username,),
-      ),
-    );
-  },
-  child: Text('Edit Password'),
-),
-                              Text(
-                                'Change Password',
-                                style: regularTextStyle.copyWith(
-                                    color: blackcolor, fontSize: 14),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ChangePasswordScreen(
+                                            )),
+                                  );
+                                },
+                                child: Text(
+                                  'Change Password',
+                                  style: regularTextStyle.copyWith(
+                                      color: blackcolor, fontSize: 14),
+                                ),
                               ),
-                              SizedBox(height: 25),
+                             SizedBox(height: 25),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Notifikasi Absensi',
                                     style: regularTextStyle.copyWith(
                                         color: blackcolor, fontSize: 14),
                                   ),
-                                  Switch(onChanged: (value) =>{} ,value: false,
-                        
+                                  Switch(
+                                    onChanged: (value) => {},
+                                    value: false,
                                   ),
                                 ],
                               ),
-                                                          SizedBox(height: 10),
+                              SizedBox(height: 10),
                               Divider(),
-                               SizedBox(height: 10),
+                              SizedBox(height: 10),
                               Text(
                                 'More',
                                 style: semiBoldTextStyle.copyWith(
                                     color: blackcolor, fontSize: 14),
                               ),
-                                SizedBox(height: 30),
+                              SizedBox(height: 30),
                               Text(
                                 'Pengumuman',
                                 style: regularTextStyle.copyWith(
                                     color: blackcolor, fontSize: 14),
                               ),
-                                SizedBox(height: 30),
-         Text(
+                              SizedBox(height: 30),
+                              Text(
                                 'Saran / Masukan',
                                 style: regularTextStyle.copyWith(
                                     color: blackcolor, fontSize: 14),
                               ),
-                                SizedBox(height: 30),
-                                Text(
+                              SizedBox(height: 30),
+                              Text(
                                 'Hubungi Kami',
                                 style: regularTextStyle.copyWith(
                                     color: blackcolor, fontSize: 14),
-
                               ),
-                                SizedBox(height: 30),
-
+                              SizedBox(height: 30),
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
@@ -242,14 +200,20 @@ String formatRupiah(String amount) {
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     prefs.setBool('isLoggedIn', false);
-                                        
+                                        await prefs.setString('loggedInUser', '');
+
+
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => SplashScreen()),
                                     );
                                   },
-                                  child: Text('Logout',style:mediumTextStyle.copyWith(color: whiteColor,fontSize: 14) ,),
+                                  child: Text(
+                                    'Logout',
+                                    style: mediumTextStyle.copyWith(
+                                        color: whiteColor, fontSize: 14),
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     padding: EdgeInsets.symmetric(
@@ -272,5 +236,3 @@ String formatRupiah(String amount) {
     );
   }
 }
-
-

@@ -1,58 +1,9 @@
-import 'dart:convert';
-import 'package:bilu2/theme.dart';
+import 'package:bilu2/provider/userProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class KeuanganScreen extends StatefulWidget {
-  final String username;
-
-  KeuanganScreen({required this.username});
-
-  @override
-  State<KeuanganScreen> createState() => _KeuanganScreenState();
-}
-
-class _KeuanganScreenState extends State<KeuanganScreen> {
-  Map<String, dynamic>? user;
-  List<Map<String, dynamic>> savingsList = [];
-  List<Map<String, dynamic>> billList = [];
-  DateTime? selectedDate;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserFromServer();
-  }
-
-  Future<void> _loadUserFromServer() async {
-    try {
-      final response = await http.get(Uri.parse(
-          'http://10.0.2.2:8000/users.json'));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        user = data['users'].firstWhere(
-          (user) => user['username'] == widget.username,
-          orElse: () => null,
-        );
-
-        // Load savings and bills
-        if (user != null) {
-          savingsList =
-              user!['savings']['history'].cast<Map<String, dynamic>>();
-          billList = user!['bill'].cast<Map<String, dynamic>>();
-        }
-
-        setState(() {});
-      } else {
-        print('Failed to load user data from server: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error loading user data: $e');
-    }
-  }
-
+class KeuanganScreen extends StatelessWidget {
   String formatRupiah(String amount) {
     final numberFormat = NumberFormat.currency(
       locale: 'id_ID',
@@ -64,15 +15,18 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: whiteColor,
-      appBar: AppBar(foregroundColor: whiteColor,
-        backgroundColor: blueColor,
+    final userProvider = Provider.of<UserProvider>(context);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: Text(
           'Keuangan',
-          style: semiBoldTextStyle.copyWith(color: whiteColor, fontSize: 18),
+          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
-      body: user == null
+      body: userProvider.username.isEmpty
           ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
@@ -80,35 +34,38 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
                   padding: const EdgeInsets.all(15),
                   child: Text(
                     'Tabungan',
-                    style: boldTextStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: savingsList.length,
+                    itemCount: userProvider.savings['history'].length,
                     itemBuilder: (context, index) {
-                      final savings = savingsList[index];
+                      final savings = userProvider.savings['history'][index];
                       return Padding(
-                        padding: const EdgeInsets.fromLTRB(15,5,15,5),
+                        padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white, // Background color
-                            borderRadius:
-                                BorderRadius.circular(10), // Rounded corners
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    Colors.black.withOpacity(0.2), // Shadow color
-                                spreadRadius: 2, // Spread radius
-                                blurRadius: 3, // Blur radius
-                                offset: Offset(0, 2), // Shadow position
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
                           child: ListTile(
-                            title: Text('${savings['date']}',style: semiBoldTextStyle.copyWith(color: blackcolor,fontSize: 12),),
+                            title: Text(
+                              '${savings['date']}',
+                              style: TextStyle(color: Colors.black, fontSize: 12),
+                            ),
                             subtitle: Text(
-                                ' ${formatRupiah(savings['amount'])}',style:boldTextStyle.copyWith(color: blackcolor,fontSize: 18) ,),
+                              '${formatRupiah(savings['amount'])}',
+                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       );
@@ -117,37 +74,38 @@ class _KeuanganScreenState extends State<KeuanganScreen> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                    'Tagihan',
-                    style: boldTextStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                
+                  'Tagihan',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: billList.length,
+                    itemCount: userProvider.bill.length,
                     itemBuilder: (context, index) {
-                      final bill = billList[index];
+                      final bill = userProvider.bill[index];
                       return Padding(
-                         padding: const EdgeInsets.fromLTRB(15,5,15,5),
+                        padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.white, // Background color
-                              borderRadius:
-                                  BorderRadius.circular(10), // Rounded corners
-                              boxShadow: [
-                                BoxShadow(
-                                  color:
-                                      Colors.black.withOpacity(0.2), // Shadow color
-                                  spreadRadius: 2, // Spread radius
-                                  blurRadius: 3, // Blur radius
-                                  offset: Offset(0, 2), // Shadow position
-                                ),
-                              ],
-                            ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
                           child: ListTile(
-                            title: Text(' ${bill['dueDate']} | ${bill['status']}',style: semiBoldTextStyle.copyWith(color: blackcolor,fontSize: 12),),
-                            subtitle:
-                                Text('${formatRupiah(bill['jumlah'])}',style:boldTextStyle.copyWith(color: blackcolor,fontSize: 18) ),
-                                
+                            title: Text(
+                              '${bill['dueDate']} | ${bill['status']}',
+                              style: TextStyle(color: Colors.black, fontSize: 12),
+                            ),
+                            subtitle: Text(
+                              '${formatRupiah(bill['jumlah'])}',
+                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       );
