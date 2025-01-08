@@ -14,11 +14,13 @@ dependencies:
   firebase_database: ^11.1.6
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^18.0.1
   google_fonts: ^6.2.1
   http: null
   image_picker: null
   intl: null
   local_auth: null
+  permission_handler: 
   provider: ^6.1.2
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.1

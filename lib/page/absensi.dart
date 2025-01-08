@@ -1,8 +1,9 @@
+import 'package:bilu2/provider/userProvider.dart';
 import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';  // Import the provider package
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import the Firestore package for Timestamp
 
 class AbsensiScreen extends StatefulWidget {
   final String username;
@@ -14,122 +15,48 @@ class AbsensiScreen extends StatefulWidget {
 }
 
 class _AbsensiScreenState extends State<AbsensiScreen> {
-  Map<String, dynamic>? user;
-  bool isLoading = true;
-  String errorMessage = '';
-  String currentDate = '';
   bool isDarkMode = false;
 
   @override
   void initState() {
     super.initState();
-    currentDate = DateTime.now().toIso8601String().split('T')[0];
-    _loadTheme();
-    _loadUserFromServer();
-  }
-
-  Future<void> _loadTheme() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    // Load user data when the screen is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).loadUserData();
     });
+
+    // Load theme setting for dark mode (assuming you have this setting in your app)
   }
 
-  Future<void> _loadUserFromServer() async {
-    try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8000/users.json'));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        user = data['users'].firstWhere(
-          (user) => user['username'] == widget.username,
-          orElse: () => null,
-        );
-
-        if (user != null) {
-          _checkAndAddAttendance();
-        }
-      } else {
-        setState(() {
-          errorMessage = 'Failed to load user data: ${response.statusCode}';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = 'Error loading user data: $e';
-      });
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _checkAndAddAttendance() async {
-    if (user != null) {
-      bool alreadyPresentToday = user!['attendance'].any((attendance) {
-        return attendance['date'] == currentDate && attendance['isPresent'] == true;
-      });
-
-      if (!alreadyPresentToday) {
-        setState(() {
-          user!['attendance'].add({
-            'date': currentDate,
-            'isPresent': true,
-          });
-        });
-        _updateUserAttendance();
-      }
-    }
-  }
-
-  Future<void> _updateUserAttendance() async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/updateAttendance'),
-        body: json.encode({
-          'username': widget.username,
-          'attendance': user!['attendance'],
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode != 200) {
-        print('Failed to update attendance');
-      }
-    } catch (e) {
-      print('Error updating attendance: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    // Access the UserProvider from the context
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(backgroundColor: blueColor,foregroundColor: whiteColor,
         title: Text(
-          'Attendance Page',
-          style: TextStyle(color: Colors.white),
+          'Absensi',
+          style: boldTextStyle.copyWith(color: whiteColor,fontSize: 22),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+
         centerTitle: true,
-        backgroundColor: isDarkMode ? blueColor : blueColor,
       ),
-      body: isLoading
+      body: userProvider.isLoading
           ? Center(child: CircularProgressIndicator())
-          : errorMessage.isNotEmpty
-              ? Center(child: Text(errorMessage, style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)))
-              : user == null
-                  ? Center(child: Text('User not found.', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)))
-                  : _buildAttendanceContent(),
-      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          : userProvider.attendance.isEmpty
+              ? Center(child: Text('No attendance data found.', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)))
+              : _buildAttendanceContent(userProvider),
     );
   }
 
-  Widget _buildAttendanceContent() {
-    List<Widget> attendanceItems = user!['attendance'].map<Widget>((attendance) {
+  Widget _buildAttendanceContent(UserProvider userProvider) {
+    List<Widget> attendanceItems = userProvider.attendance.map<Widget>((attendance) {
+      // Convert Firestore timestamp to date string
+      Timestamp timestamp = attendance['date'];
+      String formattedDate = DateFormat('yyyy-MM-dd').format(timestamp.toDate());
+
       return Card(
         margin: EdgeInsets.symmetric(vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -160,7 +87,7 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Date: ${attendance['date']}',
+                    'Date: $formattedDate',
                     style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white : Colors.black),
                   ),
                   Text(
@@ -183,7 +110,7 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(user!['photoUrl']),
+                backgroundImage: NetworkImage(userProvider.photoUrl),
                 radius: 40,
               ),
               SizedBox(width: 16),
@@ -191,11 +118,11 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user!['name'],
+                    userProvider.name,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black),
                   ),
                   Text(
-                    user!['className'],
+                    userProvider.className,
                     style: TextStyle(fontSize: 14, color: isDarkMode ? Colors.white70 : Colors.grey),
                   ),
                 ],

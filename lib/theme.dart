@@ -12,7 +12,7 @@ Color blackcolor = const Color(0XFF000000);
 
 
 TextStyle lightTextStyle = GoogleFonts.poppins(fontWeight: FontWeight.w300);
-TextStyle regularTextStyle = GoogleFonts.poppins(fontWeight: FontWeight.w400);
+TextStyle regularTextStyle = GoogleFonts.poppins(fontWeight: FontWeight.normal);
 TextStyle mediumTextStyle = GoogleFonts.poppins(fontWeight: FontWeight.w500);
 TextStyle semiBoldTextStyle = GoogleFonts.poppins(fontWeight: FontWeight.w600);
-TextStyle boldTextStyle = GoogleFonts.poppins(fontWeight: FontWeight.w700);
+TextStyle boldTextStyle = GoogleFonts.poppins(fontWeight: FontWeight.bold);

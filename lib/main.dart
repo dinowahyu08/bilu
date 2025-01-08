@@ -16,29 +16,89 @@ import 'package:flutter/services.dart';
 
 
 // Future<void> uploadDataToFirestore() async {
+  // try {
+  //   // Baca file JSON dari assets
+  //   String jsonString = await rootBundle.loadString('assets/users.json');
+  //   Map<String, dynamic> jsonData = json.decode(jsonString);
+
+  //   // Ambil koleksi users dari JSON
+  //   List<dynamic> users = jsonData['users'];
+
+  //   // Referensi ke koleksi Firestore
+  //   CollectionReference usersCollection =
+  //       FirebaseFirestore.instance.collection('users');
+
+  //   // Loop untuk memasukkan setiap user ke Firestore
+  //   for (var user in users) {
+  //     await usersCollection.doc(user['username']).set(user);
+  //     print('Data untuk ${user['username']} berhasil ditambahkan.');
+  //   }
+
+  //   print('Semua data berhasil diunggah.');
+  // } catch (e) {
+  //   print('Terjadi kesalahan: $e');
+  // }
+// Upload Announcement
 //   try {
 //     // Baca file JSON dari assets
-//     String jsonString = await rootBundle.loadString('assets/users.json');
+//     String jsonString = await rootBundle.loadString('assets/pengumuman.json');
 //     Map<String, dynamic> jsonData = json.decode(jsonString);
 
-//     // Ambil koleksi users dari JSON
-//     List<dynamic> users = jsonData['users'];
+//     // Ambil data pengumuman dari JSON
+//     List<dynamic> announcements = jsonData['announcements'];
 
-//     // Referensi ke koleksi Firestore
-//     CollectionReference usersCollection =
-//         FirebaseFirestore.instance.collection('users');
+//     // Referensi ke koleksi Firestore untuk announcements
+//     CollectionReference announcementsCollection =
+//         FirebaseFirestore.instance.collection('announcements');
 
-//     // Loop untuk memasukkan setiap user ke Firestore
-//     for (var user in users) {
-//       await usersCollection.doc(user['username']).set(user);
-//       print('Data untuk ${user['username']} berhasil ditambahkan.');
+//     // Loop untuk memasukkan setiap pengumuman ke Firestore
+//     for (var announcement in announcements) {
+//       // Membuat dokumen untuk setiap pengumuman menggunakan field title sebagai id
+//       await announcementsCollection.add({
+//         'title': announcement['title'],
+//         'content': announcement['content'],
+//         'date': announcement['date'],
+//       });
+
+//       print('Pengumuman "${announcement['title']}" berhasil ditambahkan.');
 //     }
 
-//     print('Semua data berhasil diunggah.');
+//     print('Semua pengumuman berhasil diunggah.');
+//   } catch (e) {
+//     print('Terjadi kesalahan: $e');
+//   }
+// Upload Video
+// try {
+//     // Baca file JSON dari assets
+//     String jsonString = await rootBundle.loadString('assets/videos.json');
+//     Map<String, dynamic> jsonData = json.decode(jsonString);
+
+//     // Ambil data video dari JSON
+//     List<dynamic> videos = jsonData['videos'];
+
+//     // Referensi ke koleksi Firestore untuk videos
+//     CollectionReference videosCollection =
+//         FirebaseFirestore.instance.collection('videos');
+
+//     // Loop untuk memasukkan setiap video ke Firestore
+//     for (var video in videos) {
+//       // Membuat dokumen untuk setiap video menggunakan field id sebagai id
+//       await videosCollection.add({
+//         'title': video['title'],
+//         'description': video['description'],
+//         'url': video['url'],
+//       });
+
+//       print('Video "${video['title']}" berhasil ditambahkan.');
+//     }
+
+//     print('Semua video berhasil diunggah.');
 //   } catch (e) {
 //     print('Terjadi kesalahan: $e');
 //   }
 // }
+
+
 Future<void> main() async {
 
 
@@ -85,7 +145,7 @@ class MyApp extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp(theme: ThemeData(colorSchemeSeed: blueColor),
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );

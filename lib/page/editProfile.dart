@@ -133,185 +133,42 @@
 //   }
 // }
 
-import 'dart:io';
-import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class EditProfilePage extends StatefulWidget {
-  final String currentName;
-  final String currentPhotoUrl;
-
-  EditProfilePage({required this.currentName, required this.currentPhotoUrl});
-
-  @override
-  _EditProfilePageState createState() => _EditProfilePageState();
-}
-
-class _EditProfilePageState extends State<EditProfilePage> {
-  final TextEditingController _nameController = TextEditingController();
-  File? _newPhoto;
-  bool isDarkMode = false; // Menyimpan status mode gelap
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfileData();  // Memuat data profil pengguna saat halaman dimuat
-    _loadTheme(); // Memuat status mode gelap
-  }
-
-  // Fungsi untuk memuat status dark mode dari SharedPreferences
-  Future<void> _loadTheme() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkMode = prefs.getBool('isDarkMode') ?? false; // Memuat status dark mode
-    });
-  }
-
-  // Fungsi untuk memuat data profil dari SharedPreferences berdasarkan username
-  Future<void> _loadProfileData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Ambil data nama dan foto berdasarkan kunci unik (misalnya berdasarkan username)
-    String? savedName = prefs.getString('${widget.currentName}_name');
-    String? savedPhotoUrl = prefs.getString('${widget.currentName}_photoUrl');
-
-    setState(() {
-      // Jika data nama ada, set ke controller, jika tidak, gunakan nama yang sudah ada
-      _nameController.text = savedName ?? widget.currentName;
-      // Jika ada foto yang disimpan, ubah ke File baru
-      _newPhoto = savedPhotoUrl != null ? File(savedPhotoUrl) : null;
-    });
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      final directory = await getApplicationDocumentsDirectory();
-      final newPath = '${directory.path}/${pickedFile.name}';
-      final newImage = File(newPath);
-
-      await File(pickedFile.path).copy(newImage.path);
-
-      setState(() {
-        _newPhoto = newImage;
-      });
-    }
-  }
-
-  void _saveChanges() async {
-    String newName = _nameController.text;
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Simpan nama baru dengan kunci yang unik berdasarkan username
-    await prefs.setString('${widget.currentName}_name', newName);
-
-    // Simpan foto baru jika ada
-    if (_newPhoto != null) {
-      await prefs.setString('${widget.currentName}_photoUrl', _newPhoto!.path);
-    } else {
-      await prefs.setString('${widget.currentName}_photoUrl', widget.currentPhotoUrl);
-    }
-
-    // Kembali ke halaman sebelumnya dengan data baru
-    Navigator.pop(context, {
-      'name': newName,
-      'photoUrl': _newPhoto?.path ?? widget.currentPhotoUrl
-    });
+class EditProfileScreen extends StatelessWidget {
+  void _showMessage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Profil'),
+          content: Text('Hubungi tenaga pendidik untuk mengubah profil Anda.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Tutup'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.black : whiteColor, // Sesuaikan latar belakang dengan mode gelap
       appBar: AppBar(
-        backgroundColor: isDarkMode ? Colors.grey[900] : blueColor, // Sesuaikan warna AppBar dengan mode gelap
-        title: Text(
-          "Edit Profile",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        title: Text('Edit Profil'),
+        backgroundColor: Colors.blue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300, // Sesuaikan warna background foto dengan mode gelap
-                  backgroundImage: _newPhoto != null
-                      ? FileImage(_newPhoto!)
-                      : NetworkImage(widget.currentPhotoUrl) as ImageProvider,
-                ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Tap to change profile photo',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isDarkMode ? Colors.white : blueColor, // Sesuaikan teks dengan mode gelap
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(height: 30),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: "Name",
-                  labelStyle: TextStyle(color: isDarkMode ? Colors.white : blueColor), // Label text sesuai mode gelap
-                  hintText: "Enter your name",
-                  hintStyle: TextStyle(color: isDarkMode ? Colors.grey : Colors.grey), // Hint text sesuai mode gelap
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: isDarkMode ? Colors.white : blueColor, width: 1.5),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: isDarkMode ? Colors.white : blueColor, width: 2),
-                  ),
-                ),
-                style: TextStyle(color: isDarkMode ? Colors.white : blackcolor, fontSize: 16), // Teks input sesuai mode gelap
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _saveChanges,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isDarkMode ? Colors.grey[800] : Colors.red, // Tombol warna sesuai mode gelap
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                ),
-                child: Text(
-                  "Save Changes",
-                  style: TextStyle(
-                    color: whiteColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => _showMessage(context),
+          child: Text('Edit Profil'),
         ),
       ),
     );
   }
 }
-

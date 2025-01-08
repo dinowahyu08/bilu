@@ -1,9 +1,16 @@
 import 'package:bilu2/provider/userProvider.dart';
+import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class KeuanganScreen extends StatelessWidget {
+  // Function to format date
+  String formatDate(DateTime date) {
+    return DateFormat('dd-MM-yyyy HH:mm').format(date); // Change format as needed
+  }
+
+  // Function to format currency
   String formatRupiah(String amount) {
     final numberFormat = NumberFormat.currency(
       locale: 'id_ID',
@@ -20,11 +27,13 @@ class KeuanganScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        foregroundColor: whiteColor,
         backgroundColor: Colors.blue,
         title: Text(
           'Keuangan',
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          style: boldTextStyle.copyWith(color: whiteColor,fontSize: 22)
         ),
+        centerTitle: true
       ),
       body: userProvider.username.isEmpty
           ? Center(child: CircularProgressIndicator())
@@ -42,6 +51,7 @@ class KeuanganScreen extends StatelessWidget {
                     itemCount: userProvider.savings['history'].length,
                     itemBuilder: (context, index) {
                       final savings = userProvider.savings['history'][index];
+                      DateTime savingsDate = savings['date'].toDate(); // Convert Firestore Timestamp to DateTime
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
                         child: Container(
@@ -59,11 +69,11 @@ class KeuanganScreen extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: Text(
-                              '${savings['date']}',
+                              formatDate(savingsDate), // Format date
                               style: TextStyle(color: Colors.black, fontSize: 12),
                             ),
                             subtitle: Text(
-                              '${formatRupiah(savings['amount'])}',
+                              '${formatRupiah(savings["amount"].toString())}',
                               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -82,6 +92,7 @@ class KeuanganScreen extends StatelessWidget {
                     itemCount: userProvider.bill.length,
                     itemBuilder: (context, index) {
                       final bill = userProvider.bill[index];
+                      DateTime dueDate = bill['dueDate'].toDate(); // Convert Firestore Timestamp to DateTime
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
                         child: Container(
@@ -99,11 +110,11 @@ class KeuanganScreen extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: Text(
-                              '${bill['dueDate']} | ${bill['status']}',
+                              '${formatDate(dueDate)} | ${bill['status']}',
                               style: TextStyle(color: Colors.black, fontSize: 12),
                             ),
                             subtitle: Text(
-                              '${formatRupiah(bill['jumlah'])}',
+                              '${formatRupiah(bill['jumlah'].toString())}',
                               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                           ),
