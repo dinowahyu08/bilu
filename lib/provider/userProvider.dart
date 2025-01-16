@@ -177,6 +177,7 @@
   class UserProvider with ChangeNotifier {
     String _username = '';
     String _name = '';
+    String _role='';
     String _className = '';
     String _photoUrl = '';
     List<Map<String, dynamic>> _bill = [];
@@ -189,6 +190,7 @@
     // Getters
     String get username => _username;
     String get name => _name;
+    String get role => _role;
     String get className => _className;
     String get photoUrl => _photoUrl;
     List<Map<String, dynamic>> get bill => _bill;
@@ -212,6 +214,7 @@
         // print(user);
         print('GET USER PROVIDER DONE');
         print(user);
+        
 
       }
 
@@ -233,6 +236,7 @@
         if (userSnapshot.docs.isNotEmpty) {
           final user = userSnapshot.docs.first.data();
           _name = user['name'] ?? '';
+          _role=user['role'] ?? '';
           _className = user['className'] ?? '';
           _photoUrl = user['photoUrl'] ?? '';
           _bill = List<Map<String, dynamic>>.from(user['bill'] ?? []);

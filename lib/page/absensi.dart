@@ -65,10 +65,12 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                attendance['isPresent'] ? Colors.green[200]! : Colors.red[200]!,
-                attendance['isPresent'] ? Colors.green[400]! : Colors.red[400]!,
-              ],
+          colors: attendance['status'] == 'Hadir'
+    ? [Colors.green[200]!, Colors.green[400]!]
+    : attendance['status'] == 'Sakit'
+        ? [Colors.yellow[200]!, Colors.yellow[400]!]
+        : [Colors.red[200]!, Colors.red[400]!],
+
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -78,10 +80,19 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
           child: Row(
             children: [
               Icon(
-                attendance['isPresent'] ? Icons.check_circle : Icons.cancel,
-                color: attendance['isPresent'] ? Colors.white : Colors.black,
-                size: 30,
-              ),
+  attendance['status'] == 'Hadir'
+      ? Icons.check_circle
+      : attendance['status'] == 'Sakit'
+          ? Icons.local_hospital
+          : Icons.cancel,
+  color: attendance['status'] == 'Hadir'
+      ? Colors.green
+      : attendance['status'] == 'Sakit'
+          ? Colors.orange
+          : Colors.red,
+  size: 30,
+),
+
               SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,10 +101,28 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
                     'Date: $formattedDate',
                     style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white : Colors.black),
                   ),
-                  Text(
-                    attendance['isPresent'] ? 'Present' : 'Absent',
-                    style: TextStyle(fontSize: 14, color: isDarkMode ? Colors.white70 : Colors.black54),
-                  ),
+ Text(
+  attendance['status'] == 'Hadir'
+      ? 'Hadir'
+      : attendance['status'] == 'Sakit'
+          ? 'Sakit'
+          : 'Absen',
+  style: TextStyle(
+    fontSize: 14,
+    color: isDarkMode
+        ? (attendance['status'] == 'Hadir'
+            ? Colors.green[200]
+            : attendance['status'] == 'Sakit'
+                ? Colors.orange[200]
+                : Colors.red[200])
+        : (attendance['status'] == 'Hadir'
+            ? Colors.green[800]
+            : attendance['status'] == 'Sakit'
+                ? Colors.orange[800]
+                : Colors.red[800]),
+  ),
+),
+
                 ],
               ),
             ],

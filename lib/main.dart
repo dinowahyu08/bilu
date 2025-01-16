@@ -1,3 +1,5 @@
+import 'package:bilu2/Admin/AdminHome.dart';
+import 'package:bilu2/Admin/AdminProfilePage.dart';
 import 'package:bilu2/page/HomeClient.dart';
 import 'package:bilu2/page/Profile.dart';
 import 'package:bilu2/page/login.dart';
@@ -9,6 +11,7 @@ import 'package:bilu2/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -101,8 +104,8 @@ import 'package:flutter/services.dart';
 
 Future<void> main() async {
 
-
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
   
   try {
     await Firebase.initializeApp();
@@ -118,29 +121,40 @@ Future<void> main() async {
   // await uploadDataToFirestore();
   // print('firestore done');
 }
-
 class CheckAuth extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
     return FutureBuilder(
-      future: _checkIfLoggedIn(),
+      future: userProvider.loadUserData(), // Memuat data user
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator())); // Loading screen
-        } else if (snapshot.hasData && snapshot.data == true) {
-          return HomeClient(); // Jika sudah login, masuk ke halaman utama
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          final role = userProvider.role; // Ambil role dari UserProvider
+
+          if (role == 'admin') {
+            return AdminHome(); // Halaman untuk admin
+          } else if (role == 'user') {
+            return MainPage(); // Halaman utama untuk user
+          } else {
+            return LoginScreen(); // Jika role tidak valid
+          }
         } else {
-          return LoginScreen(); // Jika belum login, masuk ke halaman login
+          return LoginScreen(); // Jika ada error atau belum login
         }
       },
     );
   }
+}
+
 
   Future<bool> _checkIfLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('isLoggedIn') ?? false; // Kembalikan nilai false jika tidak ada status login
   }
-}
+
 class MyApp extends StatelessWidget {
   
   @override
@@ -151,7 +165,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
@@ -159,26 +172,36 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0; // Indeks halaman yang dipilih
-  String _username = ''; // Variable to store username
+  String _role = ''; // Variable to store role
 
   @override
   void initState() {
     super.initState();
-    _loadUsername(); // Load username from SharedPreferences
+    _loadRole(); // Load role from UserProvider
   }
 
-  Future<void> _loadUsername() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _loadRole() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    await userProvider.loadUserData(); // Memuat data dari Firestore
     setState(() {
-      _username = prefs.getString('loggedInUser') ?? ''; // Get username from SharedPreferences
-    
+      _role = userProvider.role; // Ambil role dari UserProvider
     });
   }
-  // Daftar halaman
-   List<Widget> get _pages => [
+
+  // Daftar halaman untuk role "user"
+  List<Widget> get _userPages => [
         HomeClient(),
-        ProfilePage(username: _username,), // Pass the username here
+        ProfilePage(username: Provider.of<UserProvider>(context).username),
       ];
+
+  // Daftar halaman untuk role "admin"
+  List<Widget> get _adminPages => [
+        AdminHome(),
+        AdminProfilePage(username: Provider.of<UserProvider>(context).username),
+      ];
+
+  // Tentukan halaman berdasarkan role
+  List<Widget> get _pages => _role == 'admin' ? _adminPages : _userPages;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -186,9 +209,15 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    // Tampilkan indikator loading jika role belum dimuat
+    if (_role.isEmpty) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       body: _pages[_selectedIndex], // Menampilkan halaman sesuai dengan indeks yang dipilih
       bottomNavigationBar: BottomNavigationBar(
