@@ -3,6 +3,7 @@
     {
       "username": "dino@gmail.com",
       "name": "Dino Wahyu",
+      "role":"student",
       "className": "Kelas 1A",
       "photoUrl": "https://awsimages.detik.net.id/community/media/visual/2018/03/03/39f24229-6f26-4a17-aa92-44c3bd3dae9e_43.jpeg",
       "bill": [

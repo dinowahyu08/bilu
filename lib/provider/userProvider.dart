@@ -204,7 +204,7 @@
     // Fungsi untuk memuat data pengguna dari Firestore
     Future<void> loadUserData() async {
       _isLoading = true; // Mulai pemuatan
-      notifyListeners();
+      // notifyListeners();
 
       final user = _firebaseAuth.currentUser;
 
@@ -221,6 +221,203 @@
       _isLoading = false; // Selesai pemuatan
       notifyListeners();
     }
+
+
+
+Future<void> deleteBill(String studentId, billId) async {  
+    try {  
+      // Ambil referensi dokumen siswa  
+      final studentRef = _firestore.collection('users').doc(studentId);  
+  
+      // Ambil data siswa  
+      final studentDoc = await studentRef.get();  
+      final bills = studentDoc.data()?['bill'] as List<dynamic>?;  
+  
+      if (bills != null) {  
+        // Cari tagihan yang sesuai dengan billId  
+        final billToRemove = bills.firstWhere(  
+          (bill) => bill['id'] == billId,  
+          orElse: () => null,  
+        );  
+  
+        if (billToRemove != null) {  
+          // Hapus tagihan dari array 'bill'  
+          await studentRef.update({  
+            'bill': FieldValue.arrayRemove([billToRemove]),  
+          });  
+  
+          // Beri tahu listener bahwa data telah berubah  
+          notifyListeners();  
+        } else {  
+          throw Exception('Bill not found');  
+        }  
+      } else {  
+        throw Exception('No bills found for this student');  
+      }  
+    } catch (e) {  
+      print('Error deleting bill: $e');  
+      throw e; // Lempar error untuk ditangani di UI  
+    }  
+  }  
+
+
+   // Fungsi untuk menambah tabungan  
+  Future<void> addSaving(String studentId, int amount) async {  
+    try {  
+      // Dapatkan dokumen pengguna berdasarkan studentId  
+      final userDoc = _firestore.collection('users').doc(studentId);  
+      final snapshot = await userDoc.get();  
+  
+      if (!snapshot.exists) {  
+        throw Exception('Siswa tidak ditemukan');  
+      }  
+  
+      // Ambil data pengguna  
+      final data = snapshot.data() as Map<String, dynamic>;  
+      final savings = data['savings'] as Map<String, dynamic>? ?? {'history': []};  
+  
+      // Tambahkan tabungan baru ke history  
+      final newSaving = {  
+        'date': Timestamp.now(), // Menyimpan tanggal saat ini  
+        'amount': amount,  
+      };  
+  
+      savings['history'].add(newSaving);  
+  
+      // Perbarui dokumen pengguna dengan tabungan yang baru ditambahkan  
+      await userDoc.update({'savings': savings});  
+      
+      notifyListeners(); // Notifikasi perubahan  
+    } catch (e) {  
+      print('Error adding saving: $e');  
+      throw e; // Lemparkan error untuk ditangani di UI  
+    }  
+  }  
+    
+
+ Future<void> addBill(  
+    String studentId,  
+    int amount,  
+    String status,  
+    DateTime dueDate,  
+    DateTime? paymentDate,  
+  ) async {  
+    try {  
+      // Buat objek tagihan baru  
+      final newBill = {  
+        'status': status,  
+        'jumlah': amount,  
+        'dueDate': dueDate.toIso8601String(), // Konversi DateTime ke string  
+        'paymentDate': paymentDate?.toIso8601String(), // Konversi DateTime ke string jika ada  
+      };  
+  
+      // Ambil referensi dokumen siswa  
+      final studentRef = _firestore.collection('users').doc(studentId);  
+  
+      // Tambahkan tagihan ke array 'bill' di dokumen siswa  
+      await studentRef.update({  
+        'bill': FieldValue.arrayUnion([newBill]),  
+      });  
+  
+      // Beri tahu listener bahwa data telah berubah  
+      notifyListeners();  
+    } catch (e) {  
+      print('Error adding bill: $e');  
+      throw e; // Lempar error untuk ditangani di UI  
+    }  
+  }  
+
+  Future<void> deleteSaving(String studentId,  savingId) async {  
+    try {  
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(studentId);  
+      final snapshot = await userDoc.get();  
+  
+      if (!snapshot.exists) {  
+        throw Exception('User not found');  
+      }  
+  
+      final data = snapshot.data() as Map<String, dynamic>;  
+      final savings = data['savings']['history'] as List<dynamic>? ?? [];  
+      print(savings);
+  
+      // Temukan indeks tabungan yang akan dihapus  
+      final savingIndex = savingId;  
+      print(savingIndex);
+
+      if (savingIndex == -1) {  
+        throw Exception('Saving not found');  
+      }  
+  
+      // Hapus tabungan dari daftar  
+      savings.removeAt(savingIndex);  
+  
+      // Perbarui dokumen pengguna dengan daftar tabungan yang telah dihapus  
+      await userDoc.update({'savings.history': savings});  
+  
+      notifyListeners(); // Notifikasi perubahan state  
+    } catch (e) {  
+      print('Error deleting saving: $e');  
+      throw e; // Lempar kembali error untuk ditangani di UI  
+    }  
+  }
+
+
+  // Fungsi untuk mengambil semua data pengguna dengan role 'student'  
+  Future<List<Map<String, dynamic>>> fetchAllStudents() async {  
+    List<Map<String, dynamic>> students = [];  
+    try {  
+      // Ambil data pengguna dari koleksi Firestore dengan role 'student'  
+      final studentSnapshot = await _firestore  
+          .collection('users')  
+          .where('role', isEqualTo: 'student')  
+          .get();  
+    
+      // Jika ada dokumen yang ditemukan, tambahkan ke daftar students  
+      for (var doc in studentSnapshot.docs) {  
+        students.add(doc.data() as Map<String, dynamic>);  
+      }  
+    } catch (e) {  
+      print('Error fetching students from Firestore: $e');  
+    }  
+    print("ALL STUDENT${students}");
+    
+    return students; // Kembalikan daftar pengguna dengan role 'student'  
+  }  
+
+
+ // Method to fetch all students by class  
+  Future<void> fetchStudentsByClass(String className) async {  
+    _isLoading = true;  
+    notifyListeners();  
+  
+    try {  
+      final snapshot = await _firestore  
+          .collection('users')  
+          .where('role', isEqualTo: 'student')  
+          .where('className', isEqualTo: className)  
+          .get();  
+  
+      _students = snapshot.docs.map((doc) {  
+        final data = doc.data();  
+        return {  
+          'id': doc.id,  
+          'name': data['name'],  
+          'photoUrl': data['photoUrl'],  
+          'className': data['className'],  
+        };  
+      }).toList();  
+    } catch (e) {  
+      print('Error fetching students: $e');  
+    }  
+  
+    _isLoading = false;  
+    notifyListeners();  
+  }  
+  
+
+
+  List<Map<String, dynamic>> _students = [];  
+  List<Map<String, dynamic>> get students => _students;  
 
 
 

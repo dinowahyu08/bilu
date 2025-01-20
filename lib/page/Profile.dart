@@ -805,7 +805,7 @@ class _ProfilePageState extends State<ProfilePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProvider>(context, listen: false).loadUserData();
       Provider.of<AnnouncementProvider>(context, listen: false)
-          .loadAnnouncements();
+          .fetchAnnouncements();
     });
   }
 

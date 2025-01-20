@@ -5,15 +5,17 @@ plugins {
 }
 
 apply plugin: 'com.google.gms.google-services' // Add Firebase Google Services plugin
-
+apply plugin: 'com.android.application'
 android {
     namespace = "com.example.bilu2"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true  
     }
 
     kotlinOptions {
@@ -23,9 +25,10 @@ android {
     defaultConfig {
         applicationId = "com.example.bilu2"
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -37,4 +40,14 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'  
+    implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation "androidx.multidex:multidex:2.0.1"  
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
 }

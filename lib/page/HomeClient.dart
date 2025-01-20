@@ -533,7 +533,7 @@ class _HomeClientState extends State<HomeClient> {
     // Load user data and announcements when the app first starts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProvider>(context, listen: false).loadUserData();
-      Provider.of<AnnouncementProvider>(context, listen: false).loadAnnouncements();
+      Provider.of<AnnouncementProvider>(context, listen: false).fetchAnnouncements();
     });
   }
 
@@ -592,7 +592,7 @@ class _HomeClientState extends State<HomeClient> {
     final userProvider = Provider.of<UserProvider>(context);
     final announcementProvider = Provider.of<AnnouncementProvider>(context);
 
- if (userProvider.isLoading || announcementProvider.announcements.isEmpty) {
+ if (userProvider.isLoading || announcementProvider.isLoading) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(color: blueColor),

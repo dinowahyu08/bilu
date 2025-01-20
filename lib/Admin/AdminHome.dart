@@ -246,6 +246,7 @@
 
 import 'package:bilu2/Admin/AnnouncmentAdmin.dart';
 import 'package:bilu2/Admin/AttendacedPageAdmin.dart';
+import 'package:bilu2/Admin/KeuanganSiswa.dart';
 import 'package:bilu2/Admin/VideoPageAdmin.dart';
 import 'package:bilu2/provider/userProvider.dart';
 import 'package:bilu2/theme.dart';
@@ -475,8 +476,11 @@ class _AdminHomeState extends State<AdminHome> {
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.deepOrange),
                   ),
-                       onPressed: () {
-                AdminAnnouncementPage();},
+              onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AnnouncementPageAdmin()),
+                  );},
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(
@@ -508,7 +512,10 @@ class _AdminHomeState extends State<AdminHome> {
                         MaterialStateProperty.all<Color>(Colors.green),
                   ),
                   onPressed: () {
-                  },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StudentFinancePage()),
+                  );},
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(

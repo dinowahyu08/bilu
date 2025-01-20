@@ -10,23 +10,25 @@ dependencies:
   cloud_firestore: ^5.5.1
   firebase_analytics: ^11.3.3
   firebase_auth: ^5.3.3
-  firebase_core: ^3.10.0
+  firebase_core: null
   firebase_database: ^11.3.0
   firebase_messaging: ^15.2.0
   flutter:
     sdk: flutter
   flutter_local_notifications: ^18.0.1
+  google_adsense: ^0.1.1
   google_fonts: ^6.2.1
   http: null
   image_picker: null
-  intl: ^0.20.1
+  intl: ^0.19.0
   local_auth: null
   permission_handler: null
-  provider: ^6.1.2
+  provider: null
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
   webview_flutter: ^4.0.1
   youtube_player_flutter: ^9.0.4
+  google_mobile_ads: ^5.2.0
 dev_dependencies:
   flutter_lints: ^3.0.0
   flutter_test:
