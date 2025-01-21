@@ -90,31 +90,25 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                                   Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          userProvider.name,
-                                          style: boldTextStyle.copyWith(
-                                              color: blackcolor, fontSize: 18),
-                                        ),
-                                                Text('Kelas : ${userProvider.className}'
-                                          ,
-                                          style: boldTextStyle.copyWith(
-                                              color: blackcolor, fontSize: 14),
-                                        ),
-                                        Text(
-                                          'Tabunganku',
-                                          style: boldTextStyle.copyWith(
-                                              color: blackcolor, fontSize: 12),
-                                        ),
-                                        Text(
-                                          userProvider.calculateTotalSavings(),
-                                          style: semiBoldTextStyle.copyWith(
-                                              color: blackcolor, fontSize: 14),
-                                        )
-                                      ],
+                                    child: Container(width: 190,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            userProvider.name,
+                                            style: boldTextStyle.copyWith(
+                                                color: blackcolor, fontSize: 18),
+                                          ),
+                                                  
+                                          Text(
+                                            userProvider.username,
+                                            style: boldTextStyle.copyWith(
+                                                color: blackcolor, fontSize: 12),
+                                          ),
+                                        
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -131,7 +125,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                               GestureDetector(
                                 onTap: () {showDialog(context: context, builder: (context) {return AlertDialog(
           title: Text('Edit Profil'),
-          content: Text('Hubungi tenaga pendidik untuk mengubah profil Anda.'),
+          content: Text('Ubah Detail Profile Di'),
           actions: [
             TextButton(
               onPressed: () {
@@ -175,7 +169,6 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                                 style: semiBoldTextStyle.copyWith(
                                     color: blackcolor, fontSize: 14),
                               ),
-                              SizedBox(height: 30),
                    
                               SizedBox(height: 30),
                               Text(

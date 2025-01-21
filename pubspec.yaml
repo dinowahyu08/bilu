@@ -16,8 +16,12 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications: ^18.0.1
+  flutter_login: ^5.0.0
+  font_awesome_flutter: ^10.8.0
   google_adsense: ^0.1.1
   google_fonts: ^6.2.1
+  google_mobile_ads: ^5.2.0
+  google_sign_in: ^6.2.2
   http: null
   image_picker: null
   intl: ^0.19.0
@@ -28,7 +32,6 @@ dependencies:
   url_launcher: ^6.3.1
   webview_flutter: ^4.0.1
   youtube_player_flutter: ^9.0.4
-  google_mobile_ads: ^5.2.0
 dev_dependencies:
   flutter_lints: ^3.0.0
   flutter_test:

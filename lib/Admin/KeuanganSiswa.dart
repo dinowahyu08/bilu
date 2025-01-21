@@ -578,7 +578,8 @@
 // }      
   
 
-import 'package:bilu2/provider/userProvider.dart';  
+import 'package:bilu2/provider/userProvider.dart';
+import 'package:bilu2/theme.dart';  
 import 'package:cloud_firestore/cloud_firestore.dart';    
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';    
@@ -688,16 +689,31 @@ class _StudentFinancePageState extends State<StudentFinancePage> {
   Widget build(BuildContext context) {    
     final userProvider = Provider.of<UserProvider>(context);    
     
-    return Scaffold(    
-      appBar: AppBar(    
-        title: Text('Keuangan Siswa'),    
+    return Scaffold(    backgroundColor: whiteColor,
+      appBar: AppBar(  
+         backgroundColor: Colors.green,
+        foregroundColor: whiteColor, 
+        title: Text('Keuangan Siswa',style: boldTextStyle.copyWith(
+            color: whiteColor,
+            fontSize: 24,
+          ),),    
       ),    
       body: Column(    
         children: [    
           // Dropdown untuk memilih kelas    
           Padding(    
             padding: const EdgeInsets.all(16.0),    
-            child: DropdownButton<String>(    
+            child: DropdownButton<String>(  icon: Icon(Icons.arrow_drop_down),  
+  iconSize: 24,  
+  iconEnabledColor: blueColor,  
+  iconDisabledColor: Colors.grey,  
+  dropdownColor: whiteColor,  
+  elevation: 16,  
+  focusColor: blueColor,  
+  underline: Container(  
+    height: 2,  
+    color: Colors.blue,  
+  ),  
               value: _selectedClass,    
               hint: Text('Pilih Kelas'),    
               onChanged: (value) {    
@@ -709,7 +725,7 @@ class _StudentFinancePageState extends State<StudentFinancePage> {
               items: _studentsPerClass.keys.map((className) {    
                 return DropdownMenuItem<String>(    
                   value: className,    
-                  child: Text(className),    
+                  child: Text(className,style: mediumTextStyle.copyWith(color: blackcolor),),    
                 );    
               }).toList(),    
             ),    
@@ -725,7 +741,7 @@ class _StudentFinancePageState extends State<StudentFinancePage> {
               itemBuilder: (context, index) {    
                 final student = _studentsPerClass[_selectedClass]![index];    
                 return ListTile(    
-                  title: Text(student['name']),    
+                  title: Text(student['name'],style: boldTextStyle.copyWith(color: blackcolor,fontSize: 18),),    
                   subtitle: Text('Kelas: ${student['className']}'),    
                   trailing: Row(    
                     mainAxisSize: MainAxisSize.min,    
@@ -744,7 +760,7 @@ class _StudentFinancePageState extends State<StudentFinancePage> {
                       IconButton(    
                         icon: Icon(Icons.receipt),    
                         onPressed: () {    
-                          Navigator.pushReplacement(    
+                          Navigator.push(    
                             context,    
                             MaterialPageRoute(    
                               builder: (context) => BillsPage(studentId: student['id'], bills: student['bill']),    
@@ -764,27 +780,182 @@ class _StudentFinancePageState extends State<StudentFinancePage> {
   }    
 }    
   
-class BillsPage extends StatefulWidget {      
-  final String studentId;      
-  final List<dynamic> bills; // Tambahkan parameter bills  
+// class BillsPage extends StatefulWidget {      
+//   final String studentId;      
+//   final List<dynamic> bills; // Tambahkan parameter bills  
   
       
-  BillsPage({required this.studentId, required this.bills});      
+//  BillsPage({required this.studentId, List<dynamic>? bills})  
+//       : bills = bills ?? [];       
 
-  @override
-  State<BillsPage> createState() => _BillsPageState();
-}
+//   @override
+//   State<BillsPage> createState() => _BillsPageState();
+// }
 
-class _BillsPageState extends State<BillsPage> {
+// class _BillsPageState extends State<BillsPage> {
+//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;  
+//   String? _selectedClass;  
+//   Map<String, List<Map<String, dynamic>>> _studentsPerClass = {};  
+//   List<Map<String, dynamic>> _bills = [];  
+    
+//   @override  
+//   void initState() {  
+//     _fetchAllStudents();  
+//     _fetchBill();
+//     super.initState();  
+//   }  
+  
+//   Future<void> _fetchAllStudents() async {  
+//     try {  
+//       final snapshot = await _firestore  
+//           .collection('users')  
+//           .where('role', isEqualTo: 'student')  
+//           .get();  
+  
+//       final students = snapshot.docs.map((doc) {  
+//         final data = doc.data();  
+//         return {  
+//           'id': doc.id,  
+//           'name': data['name'],  
+//           'photoUrl': data['photoUrl'],  
+//           'className': data['className'],  
+//           'bill': data['bill'], // Ambil data tagihan  
+//           'savings': data['savings'], // Ambil data tabungan  
+//         };  
+//       }).toList();  
+  
+//       final Map<String, List<Map<String, dynamic>>> groupedStudents = {};  
+//       for (var student in students) {  
+//         final className = student['className'] as String;  
+//         if (!groupedStudents.containsKey(className)) {  
+//           groupedStudents[className] = [];  
+//         }  
+//         groupedStudents[className]?.add(student);  
+//       }  
+  
+//       setState(() {  
+//         _studentsPerClass = groupedStudents;  
+//       });  
+//     } catch (e) {  
+//       print('Error fetching students: $e');  
+//     }  
+//   }  
+  
+  
+
+//   Future<void> _fetchBill() async {    
+//     if (_selectedClass == null) return;    
+//         if (_selectedClass == null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Please select a class')),
+//       );
+//       return;
+//     }
+//     try {    
+//       final snapshot = await _firestore    
+//           .collection('users')    
+//           .where('className', isEqualTo: _selectedClass)    
+//           .get();    
+    
+//       final List<Map<String, dynamic>> fetchedBills = [];    
+    
+//       for (var doc in snapshot.docs) {    
+//         final data = doc.data();    
+//         final bills = data['bill'] as List<dynamic>?;    
+    
+//         if (bills != null) {    
+//           for (var record in bills) {    
+//             fetchedBills.add({    
+//               'studentId': doc.id,    
+//               'status': record['status'],    
+//               'jumlah': record['jumlah'],    
+//               'dueDate': record['dueDate'], // Mengonversi string ke DateTime    
+//               'paymentDate': record['paymentDate'] != null &&
+//                       record['paymentDate'] is String
+//                   ? DateTime.parse(record[
+//                       'paymentDate']) // Mengonversi string ke DateTime jika ada
+//                   : null, // Jika paymentDate null, maka tipe data menjadi null  
+//             });    
+//           }    
+//         }    
+//       }    
+    
+//       setState(() {    
+//         _bills = fetchedBills;    
+//       });    
+//     } catch (e) {    
+//       print('Error fetching bills: $e');    
+//     }    
+//   }  
+
+
+//   @override      
+//   Widget build(BuildContext context) {   
+//     final userProvider = Provider.of<UserProvider>(context); // Ambil UserProvider    
+
+//     return Scaffold(      
+//       appBar: AppBar(      
+//         title: Text('Tagihan Siswa'),      
+//       ),      
+//       body: Column(      
+//         children: [      
+//           Expanded(      
+//             child: ListView.builder(      
+//               itemCount: widget.bills.length,      
+//               itemBuilder: (context, index) {      
+//                 final bill = widget.bills[index];      
+//                 return ListTile(      
+//                   title: Text('Tagihan: ${bill['jumlah']}'),      
+//                   subtitle: Text('Status: ${bill['status']}'),      
+//                   trailing: IconButton(      
+//                     icon: Icon(Icons.delete),      
+//                     onPressed: () async{      
+//                       // Logika untuk menghapus tagihan    
+//                       await userProvider.deleteBill(widget.studentId, index); // Implementasikan fungsi ini di UserProvider    
+//                     },      
+//                   ),      
+//                 );      
+//               },      
+//             ),      
+//           ),      
+//           ElevatedButton(      
+//             onPressed: () {      
+//               // Logika untuk menambah tagihan    
+//               // userProvider.addBill(studentId, amount); // Implementasikan fungsi ini di UserProvider    
+//             },      
+//             child: Text('Tambah Tagihan'),      
+//           ),      
+//         ],      
+//       ),      
+//     );      
+//   }      
+// }  
+//
+
+  
+class BillsPage extends StatefulWidget {  
+  final String studentId;  
+  final List<dynamic> bills;  
+  
+  BillsPage({required this.studentId, List<dynamic>? bills})  
+      : bills = bills ?? [];  
+  
+  @override  
+  State<BillsPage> createState() => _BillsPageState();  
+}  
+  
+class _BillsPageState extends State<BillsPage> {  
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;  
   String? _selectedClass;  
   Map<String, List<Map<String, dynamic>>> _studentsPerClass = {};  
   List<Map<String, dynamic>> _bills = [];  
-    
+  DateTime? _dueDate;  
+  DateTime? _paymentDate;  
+  
   @override  
   void initState() {  
     _fetchAllStudents();  
-    _fetchBill();
+    _fetchBill();  
     super.initState();  
   }  
   
@@ -802,8 +973,8 @@ class _BillsPageState extends State<BillsPage> {
           'name': data['name'],  
           'photoUrl': data['photoUrl'],  
           'className': data['className'],  
-          'bill': data['bill'], // Ambil data tagihan  
-          'savings': data['savings'], // Ambil data tabungan  
+          'bill': data['bill'],  
+          'savings': data['savings'],  
         };  
       }).toList();  
   
@@ -824,101 +995,224 @@ class _BillsPageState extends State<BillsPage> {
     }  
   }  
   
+  Future<void> _fetchBill() async {  
+    if (_selectedClass == null) return;  
   
-
-  Future<void> _fetchBill() async {    
-    if (_selectedClass == null) return;    
-        if (_selectedClass == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select a class')),
-      );
-      return;
-    }
-    try {    
-      final snapshot = await _firestore    
-          .collection('users')    
-          .where('className', isEqualTo: _selectedClass)    
-          .get();    
-    
-      final List<Map<String, dynamic>> fetchedBills = [];    
-    
-      for (var doc in snapshot.docs) {    
-        final data = doc.data();    
-        final bills = data['bill'] as List<dynamic>?;    
-    
-        if (bills != null) {    
-          for (var record in bills) {    
-            fetchedBills.add({    
-              'studentId': doc.id,    
-              'status': record['status'],    
-              'jumlah': record['jumlah'],    
-              'dueDate': record['dueDate'], // Mengonversi string ke DateTime    
-              'paymentDate': record['paymentDate'] != null &&
-                      record['paymentDate'] is String
-                  ? DateTime.parse(record[
-                      'paymentDate']) // Mengonversi string ke DateTime jika ada
-                  : null, // Jika paymentDate null, maka tipe data menjadi null  
-            });    
-          }    
-        }    
-      }    
-    
-      setState(() {    
-        _bills = fetchedBills;    
-      });    
-    } catch (e) {    
-      print('Error fetching bills: $e');    
-    }    
+    try {  
+      final snapshot = await _firestore  
+          .collection('users')  
+          .where('className', isEqualTo: _selectedClass)  
+          .get();  
+  
+      final List<Map<String, dynamic>> fetchedBills = [];  
+      print('BILLLL FETCHEDDB BROOO');
+      for (var doc in snapshot.docs) {  
+        final data = doc.data();  
+        final bills = data['bill'] as List<dynamic>?;  
+  
+        if (bills != null) {  
+          for (var record in bills) {  
+            fetchedBills.add({  
+              'studentId': doc.id,  
+              'status': record['status'],  
+              'jumlah': record['jumlah'],  
+              'dueDate': record['dueDate'] != null  
+                  ? DateTime.parse(record['dueDate'])  
+                  : null,  
+              'paymentDate': record['paymentDate'] != null &&  
+                      record['paymentDate'] is String  
+                  ? DateTime.parse(record['paymentDate'])  
+                  : null,  
+            });  
+          }  
+        }  
+      }  
+  
+      setState(() {  
+        _bills = fetchedBills;  
+      });  
+    } catch (e) {  
+      print('Error fetching bills: $e');  
+    }  
   }  
+  Future<void> _showAddEditBillDialog({Map<String, dynamic>? bill}) async {  
+  final userProvider = Provider.of<UserProvider>(context, listen: false);  
+  final TextEditingController amountController = TextEditingController();  
+  final TextEditingController statusController = TextEditingController();  
+    
+  // Mengonversi dueDate dan paymentDate dengan memeriksa null  
+  DateTime? dueDate = bill != null && bill['dueDate'] != null  
+      ? DateTime.tryParse(bill['dueDate']) // Mengonversi string ke DateTime  
+      : null;  
+    
+  DateTime? paymentDate = bill != null && bill['paymentDate'] != null  
+      ? DateTime.tryParse(bill['paymentDate']) // Mengonversi string ke DateTime  
+      : null;  
+  
+  // Jika bill tidak null, isi controller dengan nilai yang ada  
+  if (bill != null) {  
+    amountController.text = bill['jumlah'].toString();  
+    statusController.text = bill['status'];  
+  }  
+  
+  await showDialog(  
+    context: context,  
+    builder: (BuildContext context) {  
+      return AlertDialog(  
+        title: Text(bill != null ? 'Edit Bill' : 'Add Bill'),  
+        content: SingleChildScrollView(  
+          child: Column(  
+            mainAxisSize: MainAxisSize.min,  
+            children: <Widget>[  
+              TextField(  
+                controller: amountController,  
+                keyboardType: TextInputType.number,  
+                decoration: InputDecoration(labelText: 'Amount'),  
+              ),  
+              TextField(  
+                controller: statusController,  
+                decoration: InputDecoration(labelText: 'Status'),  
+              ),  
+              ListTile(  
+                title: Text('Due Date: ${dueDate != null ? DateFormat('yyyy-MM-dd').format(dueDate!) : 'Select Date'}'),  
+                onTap: () async {  
+                  final DateTime? picked = await showDatePicker(  
+                    context: context,  
+                    initialDate: dueDate ?? DateTime.now(),  
+                    firstDate: DateTime(2000),  
+                    lastDate: DateTime(2101),  
+                  );  
+                  if (picked != null && picked != dueDate) {  
+                    setState(() {  
+                      dueDate = picked; // Memperbarui dueDate  
+                    });  
+                  }  
+                },  
+              ),  
+              ListTile(  
+                title: Text('Payment Date: ${paymentDate != null ? DateFormat('yyyy-MM-dd').format(paymentDate!) : 'Select Date'}'),  
+                onTap: () async {  
+                  final DateTime? picked = await showDatePicker(  
+                    context: context,  
+                    initialDate: paymentDate ?? DateTime.now(),  
+                    firstDate: DateTime(2000),  
+                    lastDate: DateTime(2101),  
+                  );  
+                  if (picked != null && picked != paymentDate) {  
+                    setState(() {  
+                      paymentDate = picked; // Memperbarui paymentDate  
+                    });  
+                  }  
+                },  
+              ),  
+            ],  
+          ),  
+        ),  
+        actions: <Widget>[  
+          TextButton(  
+            child: Text('Cancel'),  
+            onPressed: () {  
+              Navigator.of(context).pop();  
+            },  
+          ),  
+          TextButton(  
+            child: Text(bill != null ? 'Save' : 'Add'),  
+            onPressed: () async {  
+              final amount = int.tryParse(amountController.text);  
+              final status = statusController.text;  
+  
+              if (amount != null && status.isNotEmpty && dueDate != null) {  
+                if (bill != null) {  
+                  await userProvider.editBill(  
+                    widget.studentId,  
+                    bill['id'],  
+                    amount,  
+                    status,  
+                    dueDate!, // Menggunakan null assertion operator  
+                    paymentDate, // paymentDate bisa null  
+                  );  
+                } else {  
+                  await userProvider.addBill(  
+                    widget.studentId,  
+                    amount,  
+                    status,  
+                    dueDate!, // Menggunakan null assertion operator  
+                    paymentDate, // paymentDate bisa null  
+                  );  
+                }  
+                Navigator.of(context).pop();  
+                _fetchBill(); // Memperbarui daftar tagihan  
+              }  
+            },  
+          ),  
+        ],  
+      );  
+    },  
+  );  
+}  
 
+  
+  @override  
+  Widget build(BuildContext context) {  
+    final userProvider = Provider.of<UserProvider>(context);  
+  
+    return Scaffold(  
+      appBar: AppBar(  
+        title: Text('Tagihan Siswa'),  
+      ),  
+      body: Column(  
+        children: [  
+          Expanded(  
+            child: ListView.builder(  
+              itemCount: _bills.length,  
+              itemBuilder: (context, index) {  
+                final bill = _bills[index];  
+                print('${bill} INII bill');
+                return ListTile(  
+                  title: Text('Tagihan: ${bill['jumlah']}'),  
+                  subtitle: Text('Status: ${bill['status']}'),  
+                  trailing: Row(  
+                    mainAxisSize: MainAxisSize.min,  
+                    children: [  
+                      IconButton(  
+                        icon: Icon(Icons.edit),  
+                        onPressed: () {  
+                          _showAddEditBillDialog(bill: bill);  
+                        },  
+                      ),  
+                      IconButton(  
+                        icon: Icon(Icons.delete),  
+                        onPressed: () async {  
+                          await userProvider.deleteBill(widget.studentId, bill['id']);  
+                          _fetchBill();  
+                        },  
+                      ),  
+                    ],  
+                  ),  
+                );  
+              },  
+            ),  
+          ),  
+          ElevatedButton(  
+            onPressed: () {  
+              _showAddEditBillDialog();  
+            },  
+            child: Text('Tambah Tagihan'),  
+          ),  
+        ],  
+      ),  
+    );  
+  }  
+}  
 
-  @override      
-  Widget build(BuildContext context) {   
-    final userProvider = Provider.of<UserProvider>(context); // Ambil UserProvider    
-
-    return Scaffold(      
-      appBar: AppBar(      
-        title: Text('Tagihan Siswa'),      
-      ),      
-      body: Column(      
-        children: [      
-          Expanded(      
-            child: ListView.builder(      
-              itemCount: widget.bills.length,      
-              itemBuilder: (context, index) {      
-                final bill = widget.bills[index];      
-                return ListTile(      
-                  title: Text('Tagihan: ${bill['jumlah']}'),      
-                  subtitle: Text('Status: ${bill['status']}'),      
-                  trailing: IconButton(      
-                    icon: Icon(Icons.delete),      
-                    onPressed: () async{      
-                      // Logika untuk menghapus tagihan    
-                      await userProvider.deleteBill(widget.studentId, index); // Implementasikan fungsi ini di UserProvider    
-                    },      
-                  ),      
-                );      
-              },      
-            ),      
-          ),      
-          ElevatedButton(      
-            onPressed: () {      
-              // Logika untuk menambah tagihan    
-              // userProvider.addBill(studentId, amount); // Implementasikan fungsi ini di UserProvider    
-            },      
-            child: Text('Tambah Tagihan'),      
-          ),      
-        ],      
-      ),      
-    );      
-  }      
-}      
 
 class SavingsPage extends StatefulWidget {          
-  final String studentId;          
+  final String studentId;      
+      
   final Map<String, dynamic> savings; // Parameter savings    
       
-  SavingsPage({required this.studentId, required this.savings});          
+    SavingsPage({required this.studentId, Map<String, dynamic>? savings})  
+      : savings = savings ?? {};         
   
   @override  
   State<SavingsPage> createState() => _SavingsPageState();  
@@ -972,7 +1266,8 @@ class _SavingsPageState extends State<SavingsPage> {
       ),          
       body: Column(          
         children: [          
-          Expanded(          
+          Expanded( 
+              
             child: ListView.builder(          
               itemCount: savings['history'].length,          
               itemBuilder: (context, index) {          

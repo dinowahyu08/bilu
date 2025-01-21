@@ -79,13 +79,13 @@
 //               ),
 //               SizedBox(height: 15),
 //               SingleChildScrollView(scrollDirection: Axis.horizontal , child: Row(children: [Container(color: blueColor,width: MediaQuery.of(context).size.width/2-17.5,height: 150,child: Text(""),),SizedBox(width: 5,),Container(color: blueColor,width: MediaQuery.of(context).size.width/2-17.5,height: 150,)],)),
-              
+
 //               SizedBox(height: 15),
 //               // Navigate to video list screen
 //               Container(
 //                 child: TextButton(
 //                   style: ButtonStyle(
-                    
+
 //                     backgroundColor:
 //                         MaterialStateProperty.all<Color>(Color(0xFF487DD8)),
 //                   ),
@@ -118,7 +118,7 @@
 //               Container(
 //                 child: TextButton(
 //                   style: ButtonStyle(
-                    
+
 //                     backgroundColor:
 //                         MaterialStateProperty.all<Color>(Colors.teal),
 //                   ),
@@ -149,7 +149,7 @@
 //               Container(
 //                 child: TextButton(
 //                   style: ButtonStyle(
-                    
+
 //                     backgroundColor:
 //                         MaterialStateProperty.all<Color>(Colors.deepOrange),
 //                   ),
@@ -179,7 +179,7 @@
 //               Container(
 //                 child: TextButton(
 //                   style: ButtonStyle(
-                    
+
 //                     backgroundColor:
 //                         MaterialStateProperty.all<Color>(Colors.green),
 //                   ),
@@ -209,7 +209,7 @@
 //               Container(
 //                 child: TextButton(
 //                   style: ButtonStyle(
-                    
+
 //                     backgroundColor:
 //                         MaterialStateProperty.all<Color>(Colors.pink),
 //                   ),
@@ -247,10 +247,12 @@
 import 'package:bilu2/Admin/AnnouncmentAdmin.dart';
 import 'package:bilu2/Admin/AttendacedPageAdmin.dart';
 import 'package:bilu2/Admin/KeuanganSiswa.dart';
+import 'package:bilu2/Admin/UserManagement.dart';
 import 'package:bilu2/Admin/VideoPageAdmin.dart';
 import 'package:bilu2/provider/userProvider.dart';
 import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 class AdminHome extends StatefulWidget {
@@ -261,9 +263,46 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
+  late BannerAd _bannerAd;
+  bool _isBannerAdReady = false;
+  int _widthBanner =0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = BannerAd(
+      adUnitId: 'ca-app-pub-7987994707204046/9643415718',
+      size: AdSize.leaderboard,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isBannerAdReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          print('Failed to load a banner ad: ${error.message}');
+          ad.dispose();
+        },
+      ),
+    );
+    _bannerAd.load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+     _widthBanner = MediaQuery.of(context).size.width.toInt();  
 
     if (userProvider.isLoading) {
       return Scaffold(
@@ -274,6 +313,7 @@ class _AdminHomeState extends State<AdminHome> {
     }
 
     return Scaffold(
+      backgroundColor: whiteColor,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
         child: SingleChildScrollView(
@@ -286,12 +326,6 @@ class _AdminHomeState extends State<AdminHome> {
                 'Halo ${userProvider.name}!',
                 style: boldTextStyle.copyWith(color: blueColor, fontSize: 32),
               ),
-              SizedBox(height: 10),
-              Text(
-                '',
-                style:
-                    regularTextStyle.copyWith(color: blackcolor, fontSize: 14),
-              ),
               SizedBox(height: 15),
 
               // Visualization Section
@@ -300,120 +334,34 @@ class _AdminHomeState extends State<AdminHome> {
                 child: Row(
                   children: [
                     // Financial Analytics Container
-                    Container(
-                      color: blueColor,
-                      width: MediaQuery.of(context).size.width / 2 - 17.5,
-                      height: 180,
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Keuangan',
-                            style: boldTextStyle.copyWith(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Tabungan: Rp 1.500.000',
-                            style: regularTextStyle.copyWith(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            'Tertunggak: Rp 200.000',
-                            style: regularTextStyle.copyWith(
-                              color: Colors.redAccent,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            'Lunas: Rp 800.000',
-                            style: regularTextStyle.copyWith(
-                              color: Colors.greenAccent,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
+                    if (_isBannerAdReady)
+                      Container(
+                       
+                        color: whiteColor,
+                        width: _widthBanner.toDouble(),
+                        height: 100,
+                        child: AdWidget(ad: _bannerAd),
                       ),
-                    ),
-                    SizedBox(width: 5),
 
                     // Attendance Analytics Container
-                    Container(
-                      color: blueColor,
-                      width: MediaQuery.of(context).size.width / 2 - 17.5,
-                      height: 180,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Kehadiran',
-                            style: boldTextStyle.copyWith(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Background Circle
-                              Container(
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white.withOpacity(0.2),
-                                ),
-                              ),
-                              // Progress Circle
-                              SizedBox(
-                                width: 70,
-                                height: 70,
-                                child: CircularProgressIndicator(
-                                  value: 0.75, // 75% attendance
-                                  strokeWidth: 6,
-                                  color: Colors.greenAccent,
-                                  backgroundColor: Colors.white,
-                                ),
-                              ),
-                              // Attendance Percentage
-                              Text(
-                                '75%',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
 
               SizedBox(height: 15),
 
- Container(
+              Container(
                 child: TextButton(
                   style: ButtonStyle(
-                    
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Color(0xFF487DD8)),
                   ),
-                             onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => VideoPageAdmin()),
-                  );},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => VideoPageAdmin()),
+                    );
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(
@@ -424,10 +372,9 @@ class _AdminHomeState extends State<AdminHome> {
                           size: 35, // Ukuran ikon
                         ),
                         SizedBox(width: 25), // Jarak antara ikon dan teks
-                        Text(
-                          "Video Pembelajaran",
-                          style: boldTextStyle.copyWith(color: whiteColor,fontSize: 20)
-                        ),
+                        Text("Video Pembelajaran",
+                            style: boldTextStyle.copyWith(
+                                color: whiteColor, fontSize: 20)),
                       ],
                     ),
                   ),
@@ -438,16 +385,16 @@ class _AdminHomeState extends State<AdminHome> {
               Container(
                 child: TextButton(
                   style: ButtonStyle(
-                    
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.teal),
                   ),
-                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AttendancePageAdmin()),
-                  );},
-                  
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AttendancePageAdmin()),
+                    );
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(
@@ -458,10 +405,9 @@ class _AdminHomeState extends State<AdminHome> {
                           size: 35, // Ukuran ikon
                         ),
                         SizedBox(width: 25), // Jarak antara ikon dan teks
-                        Text(
-                          "Absensi",
-                          style: boldTextStyle.copyWith(color: whiteColor,fontSize: 20)
-                        ),
+                        Text("Absensi",
+                            style: boldTextStyle.copyWith(
+                                color: whiteColor, fontSize: 20)),
                       ],
                     ),
                   ),
@@ -472,15 +418,16 @@ class _AdminHomeState extends State<AdminHome> {
               Container(
                 child: TextButton(
                   style: ButtonStyle(
-                    
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.deepOrange),
                   ),
-              onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AnnouncementPageAdmin()),
-                  );},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AnnouncementPageAdmin()),
+                    );
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(
@@ -491,10 +438,9 @@ class _AdminHomeState extends State<AdminHome> {
                           size: 35, // Ukuran ikon
                         ),
                         SizedBox(width: 25), // Jarak antara ikon dan teks
-                        Text(
-                          "Pengumuman",
-                          style: boldTextStyle.copyWith(color: whiteColor,fontSize: 20)
-                        ),
+                        Text("Pengumuman",
+                            style: boldTextStyle.copyWith(
+                                color: whiteColor, fontSize: 20)),
                       ],
                     ),
                   ),
@@ -502,20 +448,20 @@ class _AdminHomeState extends State<AdminHome> {
               ),
               SizedBox(height: 10),
 
-
               // Navigate to video list screen
               Container(
                 child: TextButton(
                   style: ButtonStyle(
-                    
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.green),
                   ),
                   onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => StudentFinancePage()),
-                  );},
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => StudentFinancePage()),
+                    );
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(
@@ -526,25 +472,27 @@ class _AdminHomeState extends State<AdminHome> {
                           size: 35, // Ukuran ikon
                         ),
                         SizedBox(width: 25), // Jarak antara ikon dan teks
-                        Text(
-                          "Keuangan",
-                          style: boldTextStyle.copyWith(color: whiteColor,fontSize: 20)
-                        ),
+                        Text("Keuangan",
+                            style: boldTextStyle.copyWith(
+                                color: whiteColor, fontSize: 20)),
                       ],
                     ),
                   ),
                 ),
               ),
-               SizedBox(height: 10),
+              SizedBox(height: 10),
               // Navigate to video list screen
               Container(
                 child: TextButton(
                   style: ButtonStyle(
-                    
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.pink),
                   ),
                   onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => UserManagement()),
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
@@ -556,16 +504,45 @@ class _AdminHomeState extends State<AdminHome> {
                           size: 35, // Ukuran ikon
                         ),
                         SizedBox(width: 25), // Jarak antara ikon dan teks
-                        Text(
-                          "Students",
-                          style: boldTextStyle.copyWith(color: whiteColor,fontSize: 20)
-                        ),
+                        Text("Students",
+                            style: boldTextStyle.copyWith(
+                                color: whiteColor, fontSize: 20)),
                       ],
                     ),
                   ),
                 ),
               ),
               SizedBox(height: 10),
+              Container(
+                child: TextButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.purple),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => UserManagement()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.message,
+                          color: Colors.white, // Warna ikon
+                          size: 35, // Ukuran ikon
+                        ),
+                        SizedBox(width: 25), // Jarak antara ikon dan teks
+                        Text("Saran & Masukan",
+                            style: boldTextStyle.copyWith(
+                                color: whiteColor, fontSize: 20)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               // Other buttons
               // Add other sections like Absensi, Pengumuman, Keuangan, Students
             ],
@@ -575,4 +552,3 @@ class _AdminHomeState extends State<AdminHome> {
     );
   }
 }
-

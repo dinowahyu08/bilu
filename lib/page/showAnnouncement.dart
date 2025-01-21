@@ -80,10 +80,11 @@ Future<void> showAnnouncementDialog(BuildContext context) async {
   List<Announcement> announcements = announcementProvider.announcements;  
   
   final BannerAd myBanner = BannerAd(
-    adUnitId: 'ca-app-pub-3940256099942544/9214589741',
+    adUnitId: 'ca-app-pub-7987994707204046/2388281224',
     size: AdSize.banner,
     request: AdRequest(),
     listener: BannerAdListener(),
+    
   );
 
   myBanner.load();

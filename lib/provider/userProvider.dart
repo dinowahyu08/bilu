@@ -224,41 +224,6 @@
 
 
 
-Future<void> deleteBill(String studentId, billId) async {  
-    try {  
-      // Ambil referensi dokumen siswa  
-      final studentRef = _firestore.collection('users').doc(studentId);  
-  
-      // Ambil data siswa  
-      final studentDoc = await studentRef.get();  
-      final bills = studentDoc.data()?['bill'] as List<dynamic>?;  
-  
-      if (bills != null) {  
-        // Cari tagihan yang sesuai dengan billId  
-        final billToRemove = bills.firstWhere(  
-          (bill) => bill['id'] == billId,  
-          orElse: () => null,  
-        );  
-  
-        if (billToRemove != null) {  
-          // Hapus tagihan dari array 'bill'  
-          await studentRef.update({  
-            'bill': FieldValue.arrayRemove([billToRemove]),  
-          });  
-  
-          // Beri tahu listener bahwa data telah berubah  
-          notifyListeners();  
-        } else {  
-          throw Exception('Bill not found');  
-        }  
-      } else {  
-        throw Exception('No bills found for this student');  
-      }  
-    } catch (e) {  
-      print('Error deleting bill: $e');  
-      throw e; // Lempar error untuk ditangani di UI  
-    }  
-  }  
 
 
    // Fungsi untuk menambah tabungan  
@@ -295,37 +260,115 @@ Future<void> deleteBill(String studentId, billId) async {
   }  
     
 
- Future<void> addBill(  
-    String studentId,  
-    int amount,  
-    String status,  
-    DateTime dueDate,  
-    DateTime? paymentDate,  
-  ) async {  
-    try {  
-      // Buat objek tagihan baru  
-      final newBill = {  
-        'status': status,  
-        'jumlah': amount,  
-        'dueDate': dueDate.toIso8601String(), // Konversi DateTime ke string  
-        'paymentDate': paymentDate?.toIso8601String(), // Konversi DateTime ke string jika ada  
-      };  
+Future<void> deleteBill(String studentId, String billId) async {  
+  try {  
+    final studentRef = _firestore.collection('users').doc(studentId);  
+    final studentDoc = await studentRef.get();  
+    final bills = studentDoc.data()?['bill'] as List<dynamic>?;  
   
-      // Ambil referensi dokumen siswa  
-      final studentRef = _firestore.collection('users').doc(studentId);  
+    if (bills != null) {  
+      final billToRemove = bills.firstWhere(  
+        (bill) => bill['id'] == billId,  
+        orElse: () => null,  
+      );  
   
-      // Tambahkan tagihan ke array 'bill' di dokumen siswa  
-      await studentRef.update({  
-        'bill': FieldValue.arrayUnion([newBill]),  
-      });  
+      if (billToRemove != null) {  
+        await studentRef.update({  
+          'bill': FieldValue.arrayRemove([billToRemove]),  
+        });  
   
-      // Beri tahu listener bahwa data telah berubah  
-      notifyListeners();  
-    } catch (e) {  
-      print('Error adding bill: $e');  
-      throw e; // Lempar error untuk ditangani di UI  
+        notifyListeners();  
+      } else {  
+        throw Exception('Bill not found');  
+      }  
+    } else {  
+      throw Exception('No bills found for this student');  
     }  
+  } catch (e) {  
+    print('Error deleting bill: $e');  
+    throw e;  
   }  
+}  
+
+
+    Future<void> editBill(  
+  String studentId,  
+  String billId,  
+  int amount,  
+  String status,  
+  DateTime dueDate,  
+  DateTime? paymentDate,  
+) async {  
+  try {  
+    final studentRef = _firestore.collection('users').doc(studentId);  
+    final studentDoc = await studentRef.get();  
+    final bills = studentDoc.data()?['bill'] as List<dynamic>?;  
+  
+    if (bills != null) {  
+      final billToUpdate = bills.firstWhere(  
+        (bill) => bill['id'] == billId,  
+        orElse: () => null,  
+      );  
+  
+      if (billToUpdate != null) {  
+        final updatedBill = {  
+          'id': billId,  
+          'status': status,  
+          'jumlah': amount,  
+          'dueDate': dueDate.toIso8601String(),  
+          'paymentDate': paymentDate?.toIso8601String(),  
+        };  
+  
+        final updatedBills = bills.map((bill) {  
+          return bill['id'] == billId ? updatedBill : bill;  
+        }).toList();  
+  
+        await studentRef.update({  
+          'bill': updatedBills,  
+        });  
+  
+        notifyListeners();  
+      } else {  
+        throw Exception('Bill not found');  
+      }  
+    } else {  
+      throw Exception('No bills found for this student');  
+    }  
+  } catch (e) {  
+    print('Error editing bill: $e');  
+    throw e;  
+  }  
+}  
+
+
+ Future<void> addBill(  
+  String studentId,  
+  int amount,  
+  String status,  
+  DateTime dueDate,  
+  DateTime? paymentDate,  
+) async {  
+  try {  
+    final newBill = {  
+      'id': DateTime.now().millisecondsSinceEpoch.toString(),  
+      'status': status,  
+      'jumlah': amount,  
+      'dueDate': dueDate,  
+      'paymentDate': paymentDate,  
+    };  
+  
+    final studentRef = _firestore.collection('users').doc(studentId);  
+    await studentRef.update({  
+      'bill': FieldValue.arrayUnion([newBill]),  
+    });  
+  
+    notifyListeners();  
+  } catch (e) {  
+    print('Error adding bill: $e');  
+    throw e;  
+  }  
+}  
+
 
   Future<void> deleteSaving(String studentId,  savingId) async {  
     try {  

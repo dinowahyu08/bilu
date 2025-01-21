@@ -636,7 +636,7 @@ class _HomeClientState extends State<HomeClient> {
                     MaterialPageRoute(builder: (context) => VideoListScreen()),
                   );
                 },
-                child: Image.asset('assets/images/Button Video Pembelajaran.png'),
+                child: Image.asset('assets/images/Button Video Pembelajaran.png',width: double.infinity,),
               ),
               SizedBox(height: 10),
               // Navigate to attendance screen
@@ -647,7 +647,7 @@ class _HomeClientState extends State<HomeClient> {
                     MaterialPageRoute(builder: (context) => AbsensiScreen(username: userProvider.username)),
                   );
                 },
-                child: Image.asset('assets/images/Button Absensi.png'),
+                child: Image.asset('assets/images/Button Absensi.png',width: double.infinity),
               ),
               SizedBox(height: 10),
               // Navigate to finance screen
@@ -658,7 +658,7 @@ class _HomeClientState extends State<HomeClient> {
                     MaterialPageRoute(builder: (context) => KeuanganScreen()),
                   );
                 },
-                child: Image.asset('assets/images/Button Keuangan.png'),
+                child: Image.asset('assets/images/Button Keuangan.png',width: double.infinity),
               ),
             ],
           ),

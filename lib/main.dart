@@ -4,6 +4,7 @@ import 'package:bilu2/page/HomeClient.dart';
 import 'package:bilu2/page/Profile.dart';
 import 'package:bilu2/page/login.dart';
 import 'package:bilu2/page/splashScreen.dart';
+import 'package:bilu2/provider/UserManagementProvider.dart';
 import 'package:bilu2/provider/announcmentProvider.dart';
 import 'package:bilu2/provider/userProvider.dart';
 import 'package:bilu2/provider/videoProvider.dart';
@@ -121,6 +122,8 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => AnnouncementProvider()),
           ChangeNotifierProvider(create: (_) => VideoProvider()),
+          ChangeNotifierProvider(create: (_) => UserManagementProvider()),
+
   ], child: MyApp()));
   // await uploadDataToFirestore();
   // print('firestore done');
