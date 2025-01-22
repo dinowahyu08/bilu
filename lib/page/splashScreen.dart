@@ -2,6 +2,7 @@ import 'package:bilu2/main.dart';
 import 'package:bilu2/page/login.dart';
 import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,9 +11,26 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  AppOpenAd? openAd;
+  
+  Future<void> loadAd() async {
+    await AppOpenAd.load(
+      adUnitId: 'ca-app-pub-7987994707204046/8038997490',
+      request: const AdRequest(),
+      adLoadCallback: AppOpenAdLoadCallback(onAdLoaded: (ad) {
+        print('Open Ads Is Loaded');
+        openAd = ad;
+        openAd!.show();
+      }, onAdFailedToLoad: (error) {
+        print('Open Ads Failed To Load $error');
+      }),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    loadAd();
     _checkLoginStatus(); // Cek status login saat splash screen ditampilkan
   }
 
@@ -58,3 +76,4 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
