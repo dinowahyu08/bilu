@@ -175,6 +175,119 @@
 //   }  
 // }  
 
+// import 'package:firebase_database/firebase_database.dart';  
+// import 'package:flutter/material.dart';  
+  
+// class Announcement {  
+//   String? id; // ID pengumuman  
+//   String title; // Judul pengumuman  
+//   String content; // Konten pengumuman  
+//   String date; // Tanggal pengumuman  
+  
+//   Announcement({this.id, required this.title, required this.content, required this.date});  
+  
+//   Map<String, dynamic> toMap() {  
+//     return {  
+//       'title': title,  
+//       'content': content,  
+//       'date': date,  
+//     };  
+//   }  
+  
+//   factory Announcement.fromMap(String id, Map<dynamic, dynamic> map) {  
+//     return Announcement(  
+//       id: id, // Mengambil ID dari parameter  
+//       title: map['title'] as String,  
+//       content: map['content'] as String,  
+//       date: map['date'] as String,  
+//     );  
+//   }  
+// }  
+
+
+// class AnnouncementProvider with ChangeNotifier {  
+//   final DatabaseReference _database = FirebaseDatabase.instance.ref().child('announcements');  
+//   List<Announcement> _announcements = [];  
+//   bool _isLoading = false;  
+  
+//   List<Announcement> get announcements => _announcements;  
+//   bool get isLoading => _isLoading;  
+  
+//   Future<void> fetchAnnouncements() async {  
+
+    
+//     print("Fetch Announcement Progress");  
+//     _isLoading = true; // Set loading state to true  
+//     notifyListeners();  
+  
+//     try {  
+//       final snapshot = await _database.get();  
+//       print(snapshot);  
+//       if (snapshot.exists) {  
+//         final data = snapshot.value as Map<dynamic, dynamic>; // Mengambil data sebagai Map  
+//         _announcements = data.entries.map((entry) {  
+//           // Menggunakan Announcement.fromMap untuk membuat objek Announcement  
+//           return Announcement.fromMap(entry.key, entry.value);  
+//         }).toList();  
+//       } else {  
+//         _announcements = [];  
+//       }  
+//     } catch (error) {  
+//       print('Error fetching announcements: $error'); // Log the error  
+//       throw Exception('Failed to fetch announcements: $error');  
+//     } finally {  
+//       _isLoading = false; // Set loading state to false  
+//       print("Fetch Announcement DONE");  
+//       notifyListeners();  
+//     }  
+//     print("ANNOUNCEMENT DONE ${_announcements}");  
+//   }  
+  
+//   Future<void> addAnnouncement(Announcement announcement) async {  
+//     try {  
+//       final newAnnouncementRef = _database.push(); // Menggunakan push untuk membuat ID baru  
+//       await newAnnouncementRef.set(announcement.toMap());  
+//       announcement.id = newAnnouncementRef.key; // Set the ID for the new announcement  
+//       _announcements.add(announcement);  
+//       notifyListeners();  
+//     } catch (error) {  
+//       print('Error adding announcement: $error'); // Log the error  
+//       throw Exception('Failed to add announcement: $error');  
+//     }  
+//   }  
+  
+//   Future<void> updateAnnouncement(Announcement announcement) async {  
+//     if (announcement.id == null) {  
+//       throw Exception('Announcement ID is null');  
+//     }  
+//     try {  
+//       await _database.child(announcement.id!).update(announcement.toMap());  
+//       int index = _announcements.indexWhere((a) => a.id == announcement.id);  
+//       if (index != -1) {  
+//         _announcements[index] = announcement; // Update the local list  
+//       }  
+//       notifyListeners();  
+//     } catch (error) {  
+//       print('Error updating announcement: $error'); // Log the error  
+//       throw Exception('Failed to update announcement: $error');  
+//     }  
+//   }  
+  
+//   Future<void> deleteAnnouncement(String id) async {  
+//     try {  
+//       await _database.child(id).remove(); // Menghapus berdasarkan ID  
+//       _announcements.removeWhere((announcement) => announcement.id == id); // Remove from local list  
+//       notifyListeners();  
+//     } catch (error) {  
+//       print('Error deleting announcement: $error'); // Log the error  
+//       throw Exception('Failed to delete announcement: $error');  
+//     }  
+//   }  
+ 
+  
+// }  
+ 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';  
 import 'package:flutter/material.dart';  
   
@@ -203,8 +316,7 @@ class Announcement {
     );  
   }  
 }  
-
-
+  
 class AnnouncementProvider with ChangeNotifier {  
   final DatabaseReference _database = FirebaseDatabase.instance.ref().child('announcements');  
   List<Announcement> _announcements = [];  
@@ -213,32 +325,41 @@ class AnnouncementProvider with ChangeNotifier {
   List<Announcement> get announcements => _announcements;  
   bool get isLoading => _isLoading;  
   
-  Future<void> fetchAnnouncements() async {  
+  void fetchAnnouncements() {  
     print("Fetch Announcement Progress");  
     _isLoading = true; // Set loading state to true  
     notifyListeners();  
   
-    try {  
-      final snapshot = await _database.get();  
-      print(snapshot);  
-      if (snapshot.exists) {  
-        final data = snapshot.value as Map<dynamic, dynamic>; // Mengambil data sebagai Map  
-        _announcements = data.entries.map((entry) {  
-          // Menggunakan Announcement.fromMap untuk membuat objek Announcement  
-          return Announcement.fromMap(entry.key, entry.value);  
-        }).toList();  
-      } else {  
-        _announcements = [];  
+    // Menggunakan onValue untuk mendengarkan perubahan  
+    _database.onValue.listen((event) {  
+      try {  
+        final snapshot = event.snapshot;  
+        print(snapshot);  
+        if (snapshot.exists) {  
+          final data = snapshot.value as Map<dynamic, dynamic>; // Mengambil data sebagai Map  
+          _announcements = data.entries.map((entry) {  
+            // Menggunakan Announcement.fromMap untuk membuat objek Announcement  
+            return Announcement.fromMap(entry.key, entry.value);  
+          }).toList();  
+        } else {  
+          _announcements = [];  
+        }  
+        _isLoading = false; // Set loading state to false  
+        print("Fetch Announcement DONE");  
+        notifyListeners();  
+      } catch (error) {  
+        print('Error fetching announcements: $error'); // Log the error  
+        _isLoading = false; // Set loading state to false  
+        notifyListeners();  
+        throw Exception('Failed to fetch announcements: $error');  
       }  
-    } catch (error) {  
-      print('Error fetching announcements: $error'); // Log the error  
-      throw Exception('Failed to fetch announcements: $error');  
-    } finally {  
+    }, onError: (Object o) {  
+      final error = o as FirebaseException;  
+      print('Error: ${error.code} ${error.message}');  
       _isLoading = false; // Set loading state to false  
-      print("Fetch Announcement DONE");  
       notifyListeners();  
-    }  
-    print("ANNOUNCEMENT DONE ${_announcements}");  
+      throw Exception('Failed to fetch announcements: ${error.message}');  
+    });  
   }  
   
   Future<void> addAnnouncement(Announcement announcement) async {  
@@ -282,4 +403,3 @@ class AnnouncementProvider with ChangeNotifier {
     }  
   }  
 }  
- 

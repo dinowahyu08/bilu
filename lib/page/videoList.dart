@@ -16,9 +16,9 @@ class _VideoListScreenState extends State<VideoListScreen> {
 
   @override
   void initState() {
+    _loadBannerAd();
     super.initState();
     _fetchVideos();
-    _loadBannerAd();
   }
 
   void _fetchVideos() {

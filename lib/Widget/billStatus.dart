@@ -11,7 +11,7 @@
       print(bills);
 
       // Check if any bill has "Belum Lunas" status
-      bool hasUnpaidBill = bills.any((bill) => bill['status'] == 'Belum Lunas');
+      bool hasUnpaidBill = bills.any((bill) => bill['status'] == 'unpaid');
       return Container(height: 55,alignment: Alignment.center,
         decoration: BoxDecoration(
           color: hasUnpaidBill

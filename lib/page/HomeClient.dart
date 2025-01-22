@@ -589,9 +589,10 @@ class _HomeClientState extends State<HomeClient> {
 
   @override
   Widget build(BuildContext context) {
+    
     final userProvider = Provider.of<UserProvider>(context);
     final announcementProvider = Provider.of<AnnouncementProvider>(context);
-
+    int announcementCount = announcementProvider.announcements.length;
  if (userProvider.isLoading || announcementProvider.isLoading) {
       return Scaffold(
         body: Center(
@@ -603,9 +604,47 @@ class _HomeClientState extends State<HomeClient> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: (){showAnnouncementDialog(context);},
+
+
+
+        child: Container(height: 100,width: 100,
+          child: Stack(  
+                alignment: Alignment.center,  
+                children: [  
+                  
+                Icon(Icons.announcement, color: whiteColor,size: 30,),
+                   if (announcementCount > 0)  
+                    Positioned(  
+                      right: 30,
+                    
+                      top: 5,  
+                      child: Container(  
+                        padding: EdgeInsets.all(2),  
+                        decoration: BoxDecoration(  
+                          color: Colors.red,  
+                          borderRadius: BorderRadius.circular(10),  
+                        ),  
+                        constraints: BoxConstraints(  
+                          minWidth: 20,  
+                          minHeight: 20,  
+                        ),  
+                        child: Text(  
+                          '$announcementCount',  
+                          style: TextStyle(  
+                            color: Colors.white,  
+                            fontSize: 12,  
+                          ),  
+                          textAlign: TextAlign.center,  
+                        ),  
+                      ),  
+                    ), 
+                ],  
+              ),
+        ),
+        
+        onPressed: (){showAnnouncementDialog(context); },
         backgroundColor: blueColor,
-        child: Icon(Icons.announcement, color: whiteColor),
+        
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
@@ -626,7 +665,7 @@ class _HomeClientState extends State<HomeClient> {
               ),
               SizedBox(height: 27),
               // Display bill status
-              BillStatusWidget(bills: userProvider.bill),
+              BillStatusWidget(bills: userProvider.bills),
               SizedBox(height: 27),
               // Navigate to video list screen
               GestureDetector(

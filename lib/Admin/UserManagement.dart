@@ -858,85 +858,128 @@ class _UserManagementState extends State<UserManagement> {
   Widget build(BuildContext context) {              
     final userManagementProvider = Provider.of<UserManagementProvider>(context);              
       
-    return Scaffold(              
-      appBar: AppBar(              
-        title: Text('All Users'),              
+    return Scaffold(     backgroundColor: whiteColor,         
+      appBar: AppBar(         backgroundColor: Colors.pink, foregroundColor: whiteColor,    
+        title: Text('All Users',style: boldTextStyle.copyWith(fontSize: 24),),              
       ),              
       body: userManagementProvider.isLoading              
           ? Center(child: CircularProgressIndicator())              
-          : ListView.builder(              
-              itemCount: userManagementProvider.users.length,              
-              itemBuilder: (context, index) {              
-                final user = userManagementProvider.users[index];             
-                return ListTile(              
-                  leading: CircleAvatar(              
-                    backgroundImage: NetworkImage(user['photoUrl'] ?? ''),              
-                    child: user['photoUrl'] == null              
-                        ? Icon(Icons.person, color: Colors.white)              
-                        : null,              
-                  ),              
-                  title: Text(user['name'] ?? 'No Name'),              
-                  subtitle: Column(              
-                    crossAxisAlignment: CrossAxisAlignment.start,              
-                    children: [              
-                      Text('Role: ${user['role'] ?? 'No Role'}'),              
-                      if (user['role'] == 'student')              
-                        Text('Class: ${user['className'] ?? 'No Class'}'),              
-                      if (user['role'] == 'admin')              
-                        Text('Username: ${user['username'] ?? 'No Username'}'), // Display username for admin    
-                    ],              
-                  ),              
-                  trailing: Row(              
-                    mainAxisSize: MainAxisSize.min,              
-                    children: [              
-                      IconButton(              
-                        icon: Icon(Icons.edit),              
-                        onPressed: () => _showEditUserDialog(user['id'], user),              
+          : Padding(
+            padding: const EdgeInsets.fromLTRB(5,15,5,0),
+            child: ListView.builder(              
+                itemCount: userManagementProvider.users.length,              
+                itemBuilder: (context, index) {              
+                  final user = userManagementProvider.users[index];             
+                  return Container(
+                    decoration: BoxDecoration(
+                              color: Colors.grey[100], // Warna putih abu-abu
+                              borderRadius: BorderRadius.circular(
+                                  8), // Opsional: untuk memberi sudut melengkung
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5,
+                                horizontal:
+                                    15), 
+                    child: ListTile(              
+                      leading: CircleAvatar(              
+                        backgroundImage: NetworkImage(user['photoUrl'] ?? ''),              
+                        child: user['photoUrl'] == null              
+                            ? Icon(Icons.person, color: Colors.white)              
+                            : null,              
                       ),              
-                      IconButton(              
-                        icon: Icon(Icons.delete),              
-                        onPressed: () => _deleteUser(user['id']),              
+                      title: Text(user['name'] ?? 'No Name',style: boldTextStyle.copyWith(color: blackcolor,fontSize: 16),),              
+                      subtitle: Column(              
+                        crossAxisAlignment: CrossAxisAlignment.start,              
+                        children: [              
+                          Text('Role: ${user['role'] ?? 'No Role'}'),              
+                          if (user['role'] == 'student')              
+                            Text('Class: ${user['className'] ?? 'No Class'}'),              
+                          if (user['role'] == 'admin')              
+                            Text('Username: ${user['username'] ?? 'No Username'}'), // Display username for admin    
+                        ],              
                       ),              
-                    ],              
-                  ),              
-                );              
-              },              
-            ),              
-      floatingActionButton: Stack(              
-        children: [              
-          // Add the expandable buttons              
-          Positioned(              
-            bottom: 16,              
-            right: 16,              
-            child: Column(              
-              mainAxisSize: MainAxisSize.min,              
-              children: [              
-                // Add Student Button              
-                if (_isExpanded)              
-                  FloatingActionButton(              
-                    onPressed: () => _showAddUserDialog('student'),              
-                    child: Text('Student'),              
-                  ),              
-                // Add Admin Button              
-                if (_isExpanded)              
-                  FloatingActionButton(              
-                    onPressed: () => _showAddUserDialog('admin'),              
-                    child: Text('Admin'),              
-                  ),              
-                // Main FAB              
-                FloatingActionButton(              
-                  onPressed: () {              
-                    setState(() {              
-                      _isExpanded = !_isExpanded;              
-                    });              
-                  },              
-                  child: Icon(_isExpanded ? Icons.close : Icons.add),              
-                ),              
-              ],              
-            ),              
-          ),              
-        ],              
-      ),              
+                      trailing: Row(              
+                        mainAxisSize: MainAxisSize.min,              
+                        children: [              
+                          IconButton(              
+                            icon: Icon(Icons.edit,color: blueColor,),              
+                            onPressed: () => _showEditUserDialog(user['id'], user),              
+                          ),              
+                          IconButton(              
+                            icon: Icon(Icons.delete,color: Colors.red,),              
+                            onPressed: () => _deleteUser(user['id']),              
+                          ),              
+                        ],              
+                      ),              
+                    ),
+                  );              
+                },              
+              ),
+          ),             
+           
+      floatingActionButton: Stack(  
+        children: [  
+          // Add the expandable buttons  
+          Positioned(  
+            bottom: 16,  
+            right: 16,  
+            child: Column(  
+              mainAxisSize: MainAxisSize.min,  
+              children: [  
+                // Add Student Button  
+                AnimatedContainer(  
+                  duration: Duration(milliseconds: 300),  
+                  transform: Matrix4.translationValues(0, _isExpanded ? 0 : 100, 100),  
+                  child: Visibility(  
+                    visible: _isExpanded,  
+                    child: FloatingActionButton(  foregroundColor: whiteColor,
+                      backgroundColor: Colors.pink,  
+                      onPressed: () => _showAddUserDialog('student'),  
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.people_rounded),
+                          Text('Student', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),  
+                    ),  
+                  ),  
+                ),  
+                SizedBox(height: 10), // Space between buttons  
+                // Add Admin Button  
+                AnimatedContainer(  
+                  duration: Duration(milliseconds: 300),  
+                  transform: Matrix4.translationValues(0, _isExpanded ? 0 : 50, 0),  
+                  child: Visibility(  
+                    visible: _isExpanded,  
+                    child: FloatingActionButton(  foregroundColor: whiteColor,
+                      backgroundColor: Colors.pink,  
+                      onPressed: () => _showAddUserDialog('admin'),  
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.admin_panel_settings),
+                          Text('Admin', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),  
+                    ),  
+                  ),  
+                ),  
+                SizedBox(height: 8), // Space between buttons  
+                // Main FAB  
+                FloatingActionButton(  
+                  backgroundColor: Colors.pink,
+                  foregroundColor: whiteColor,
+                  onPressed: () {  
+                    setState(() {  
+                      _isExpanded = !_isExpanded;  
+                    });  
+                  },  
+                  child: Icon(_isExpanded ? Icons.close : Icons.add),  
+                ),  
+              ],  
+            ),  
+          ),  
+        ],  
+      )           
     );              
   }              
 }              

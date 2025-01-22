@@ -1,10 +1,16 @@
+import 'package:bilu2/Widget/billStatus.dart';
 import 'package:bilu2/provider/userProvider.dart';
 import 'package:bilu2/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class KeuanganScreen extends StatelessWidget {
+class KeuanganScreen extends StatefulWidget {
+  @override
+  State<KeuanganScreen> createState() => _KeuanganScreenState();
+}
+
+class _KeuanganScreenState extends State<KeuanganScreen> {
   // Function to format date
   String formatDate(DateTime date) {
     return DateFormat('dd-MM-yyyy HH:mm').format(date); // Change format as needed
@@ -18,6 +24,14 @@ class KeuanganScreen extends StatelessWidget {
       decimalDigits: 0,
     );
     return numberFormat.format(int.parse(amount));
+  }
+    @override
+  void initState() {
+    super.initState();
+    // Load user data and announcements when the app first starts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).loadUserData();
+    });
   }
 
   @override
@@ -52,33 +66,33 @@ class KeuanganScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final savings = userProvider.savings['history'][index];
                       DateTime savingsDate = savings['date'].toDate(); // Convert Firestore Timestamp to DateTime
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-                        child: Container(
+                      return 
+                        
+                        
+                          
+                          Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset: Offset(0, 2),
+                            color: Colors.grey[100], // Warna putih abu-abu
+                            borderRadius: BorderRadius.circular(
+                                8), // Opsional: untuk memberi sudut melengkung
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5,
+                              horizontal:
+                                  15), 
+                            child: ListTile(
+                              title: Text(
+                                formatDate(savingsDate), // Format date
+                                style: TextStyle(color: Colors.black, fontSize: 12),
                               ),
-                            ],
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              formatDate(savingsDate), // Format date
-                              style: TextStyle(color: Colors.black, fontSize: 12),
+                              subtitle: Text(
+                                '${formatRupiah(savings["amount"].toString())}',
+                                style: boldTextStyle.copyWith(color: blackcolor,fontSize: 18),
+                              ),
                             ),
-                            subtitle: Text(
-                              '${formatRupiah(savings["amount"].toString())}',
-                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      );
+                          );
+                        
+                      
                     },
                   ),
                 ),
@@ -87,42 +101,49 @@ class KeuanganScreen extends StatelessWidget {
                   'Tagihan',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: userProvider.bill.length,
-                    itemBuilder: (context, index) {
-                      final bill = userProvider.bill[index];
-                      DateTime dueDate = bill['dueDate'].toDate(); // Convert Firestore Timestamp to DateTime
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
+                Expanded(  
+              child: ListView.builder(  
+                itemCount: userProvider.bills.length,  
+                itemBuilder: (context, index) {  
+                  final bill = userProvider.bills[index];  
+                  return Container(  
+                    decoration: BoxDecoration(
+                            color: Colors.grey[100], // Warna putih abu-abu
+                            borderRadius: BorderRadius.circular(
+                                8), // Opsional: untuk memberi sudut melengkung
                           ),
-                          child: ListTile(
-                            title: Text(
-                              '${formatDate(dueDate)} | ${bill['status']}',
-                              style: TextStyle(color: Colors.black, fontSize: 12),
-                            ),
-                            subtitle: Text(
-                              '${formatRupiah(bill['jumlah'].toString())}',
-                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5,
+                              horizontal:
+                                  15), 
+                    child: ListTile(  
+                      title: Column(  
+                        crossAxisAlignment: CrossAxisAlignment.start,  
+                        children: [  
+                          Text(  
+                            ' ${userProvider.formatRupiah(bill['amount'].toString())}',  
+                            style: boldTextStyle.copyWith(color: blackcolor,fontSize: 18), // Styling: Add style to text  
+                          ),  
+                          Text(  
+                            'Tanggal Jatuh Tempo: ${DateFormat('EEEE, dd-MM-yyyy', 'id_ID').format(bill['dueDate'].toDate())}',  
+                            style: regularTextStyle.copyWith(color: blackcolor,fontSize: 12), // Styling: Add style to text  
+                          ),  
+                          Text(  
+                            'Tanggal Pembayaran: ${bill['paymentDate'] != null ? DateFormat('EEEE, dd-MM-yyyy', 'id_ID').format(bill['paymentDate'].toDate()) : 'Belum dibayar'}',  
+                           style: regularTextStyle.copyWith(color: blackcolor,fontSize: 12), //ling: Add style to text  
+                          ),  
+                          Text(  
+                            'Status: ${bill['status']}',  
+                            style: regularTextStyle.copyWith(color: blackcolor,fontSize: 12), //// Styling: Add style to text  
+                          ),  
+                        ],  
+                      ),  
+                      
+                    ),  
+                  );  
+                },  
+              ),  
+            ),  
               ],
             ),
     );

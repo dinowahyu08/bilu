@@ -180,7 +180,7 @@
     String _role='';
     String _className = '';
     String _photoUrl = '';
-    List<Map<String, dynamic>> _bill = [];
+    List<Map<String, dynamic>> _bills = [];
     List<Map<String, dynamic>> _attendance = [];
     Map<String, dynamic> _savings = {
       'history': [],
@@ -193,7 +193,7 @@
     String get role => _role;
     String get className => _className;
     String get photoUrl => _photoUrl;
-    List<Map<String, dynamic>> get bill => _bill;
+    List<Map<String, dynamic>> get bills => _bills;
     List<Map<String, dynamic>> get attendance => _attendance;
     Map<String, dynamic> get savings => _savings;
     bool get isLoading => _isLoading; // Getter untuk status pemuatan
@@ -222,150 +222,46 @@
       notifyListeners();
     }
 
-
-
-
-
-   // Fungsi untuk menambah tabungan  
-  Future<void> addSaving(String studentId, int amount) async {  
-    try {  
-      // Dapatkan dokumen pengguna berdasarkan studentId  
-      final userDoc = _firestore.collection('users').doc(studentId);  
-      final snapshot = await userDoc.get();  
-  
-      if (!snapshot.exists) {  
-        throw Exception('Siswa tidak ditemukan');  
-      }  
-  
-      // Ambil data pengguna  
-      final data = snapshot.data() as Map<String, dynamic>;  
-      final savings = data['savings'] as Map<String, dynamic>? ?? {'history': []};  
-  
-      // Tambahkan tabungan baru ke history  
-      final newSaving = {  
-        'date': Timestamp.now(), // Menyimpan tanggal saat ini  
-        'amount': amount,  
-      };  
-  
-      savings['history'].add(newSaving);  
-  
-      // Perbarui dokumen pengguna dengan tabungan yang baru ditambahkan  
-      await userDoc.update({'savings': savings});  
-      
-      notifyListeners(); // Notifikasi perubahan  
-    } catch (e) {  
-      print('Error adding saving: $e');  
-      throw e; // Lemparkan error untuk ditangani di UI  
-    }  
-  }  
-    
-
-Future<void> deleteBill(String studentId, String billId) async {  
+// Function to add a new saving entry with date  
+Future<void> addSaving(String studentId, int amount, DateTime date) async {  
   try {  
-    final studentRef = _firestore.collection('users').doc(studentId);  
-    final studentDoc = await studentRef.get();  
-    final bills = studentDoc.data()?['bill'] as List<dynamic>?;  
-  
-    if (bills != null) {  
-      final billToRemove = bills.firstWhere(  
-        (bill) => bill['id'] == billId,  
-        orElse: () => null,  
-      );  
-  
-      if (billToRemove != null) {  
-        await studentRef.update({  
-          'bill': FieldValue.arrayRemove([billToRemove]),  
-        });  
-  
-        notifyListeners();  
-      } else {  
-        throw Exception('Bill not found');  
-      }  
-    } else {  
-      throw Exception('No bills found for this student');  
-    }  
-  } catch (e) {  
-    print('Error deleting bill: $e');  
-    throw e;  
-  }  
-}  
-
-
-    Future<void> editBill(  
-  String studentId,  
-  String billId,  
-  int amount,  
-  String status,  
-  DateTime dueDate,  
-  DateTime? paymentDate,  
-) async {  
-  try {  
-    final studentRef = _firestore.collection('users').doc(studentId);  
-    final studentDoc = await studentRef.get();  
-    final bills = studentDoc.data()?['bill'] as List<dynamic>?;  
-  
-    if (bills != null) {  
-      final billToUpdate = bills.firstWhere(  
-        (bill) => bill['id'] == billId,  
-        orElse: () => null,  
-      );  
-  
-      if (billToUpdate != null) {  
-        final updatedBill = {  
-          'id': billId,  
-          'status': status,  
-          'jumlah': amount,  
-          'dueDate': dueDate.toIso8601String(),  
-          'paymentDate': paymentDate?.toIso8601String(),  
-        };  
-  
-        final updatedBills = bills.map((bill) {  
-          return bill['id'] == billId ? updatedBill : bill;  
-        }).toList();  
-  
-        await studentRef.update({  
-          'bill': updatedBills,  
-        });  
-  
-        notifyListeners();  
-      } else {  
-        throw Exception('Bill not found');  
-      }  
-    } else {  
-      throw Exception('No bills found for this student');  
-    }  
-  } catch (e) {  
-    print('Error editing bill: $e');  
-    throw e;  
-  }  
-}  
-
-
- Future<void> addBill(  
-  String studentId,  
-  int amount,  
-  String status,  
-  DateTime dueDate,  
-  DateTime? paymentDate,  
-) async {  
-  try {  
-    final newBill = {  
-      'id': DateTime.now().millisecondsSinceEpoch.toString(),  
-      'status': status,  
-      'jumlah': amount,  
-      'dueDate': dueDate,  
-      'paymentDate': paymentDate,  
-    };  
-  
-    final studentRef = _firestore.collection('users').doc(studentId);  
-    await studentRef.update({  
-      'bill': FieldValue.arrayUnion([newBill]),  
+    final timestamp = Timestamp.fromDate(date);  
+    await _firestore.collection('users').doc(studentId).update({  
+      'savings.history': FieldValue.arrayUnion([  
+        {'amount': amount, 'date': timestamp}  
+      ])  
     });  
-  
-    notifyListeners();  
   } catch (e) {  
-    print('Error adding bill: $e');  
-    throw e;  
+    print('Error adding saving: $e');  
+    throw Exception('Gagal menambahkan tabungan');  
+  }  
+}  
+  
+// Function to edit a saving entry with date  
+Future<void> editSaving(String studentId, int index, int newAmount, DateTime newDate) async {  
+  try {  
+    final userDoc = await _firestore.collection('users').doc(studentId).get();  
+    if (userDoc.exists) {  
+      final savingsData = userDoc.data()?['savings'] ?? {};  
+      final history = savingsData['history'] as List<dynamic>;  
+  
+      if (index >= 0 && index < history.length) {  
+        // Update the amount and date at the specified index  
+        history[index]['amount'] = newAmount;  
+        history[index]['date'] = Timestamp.fromDate(newDate);  
+  
+        await _firestore.collection('users').doc(studentId).update({  
+          'savings.history': history,  
+        });  
+      } else {  
+        throw Exception('Indeks tabungan tidak valid');  
+      }  
+    } else {  
+      throw Exception('Dokumen pengguna tidak ditemukan');  
+    }  
+  } catch (e) {  
+    print('Error editing saving: $e');  
+    throw Exception('Gagal memperbarui tabungan');  
   }  
 }  
 
@@ -479,7 +375,7 @@ Future<void> deleteBill(String studentId, String billId) async {
           _role=user['role'] ?? '';
           _className = user['className'] ?? '';
           _photoUrl = user['photoUrl'] ?? '';
-          _bill = List<Map<String, dynamic>>.from(user['bill'] ?? []);
+          _bills = List<Map<String, dynamic>>.from(user['bills'] ?? []);
           _attendance = List<Map<String, dynamic>>.from(user['attendance'] ?? []);
           _savings = user['savings'] ?? {'history': []};
         }

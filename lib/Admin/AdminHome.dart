@@ -246,6 +246,7 @@
 
 import 'package:bilu2/Admin/AnnouncmentAdmin.dart';
 import 'package:bilu2/Admin/AttendacedPageAdmin.dart';
+import 'package:bilu2/Admin/FeedbackAdmin.dart';
 import 'package:bilu2/Admin/KeuanganSiswa.dart';
 import 'package:bilu2/Admin/UserManagement.dart';
 import 'package:bilu2/Admin/VideoPageAdmin.dart';
@@ -522,7 +523,7 @@ class _AdminHomeState extends State<AdminHome> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => UserManagement()),
+                      MaterialPageRoute(builder: (context) => FeedbackAdminPage()),
                     );
                   },
                   child: Padding(
