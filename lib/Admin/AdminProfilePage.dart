@@ -75,6 +75,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                           ),
                         ),
                         width: 350,
+                        height: MediaQuery.of(context).size.height,
                         child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
@@ -125,7 +126,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                               GestureDetector(
                                 onTap: () {showDialog(context: context, builder: (context) {return AlertDialog(
           title: Text('Edit Profil'),
-          content: Text('Ubah Detail Profile Di'),
+          content: Text('Ubah Detail Profile Di User Manage'),
           actions: [
             TextButton(
               onPressed: () {
@@ -171,10 +172,32 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                               ),
                    
                               SizedBox(height: 30),
-                              Text(
-                                'Hubungi Kami',
-                                style: regularTextStyle.copyWith(
-                                    color: blackcolor, fontSize: 14),
+                              GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Hubungi Kami'),
+                                          content: Text.rich(TextSpan(children:<TextSpan> [TextSpan(text: 'Laporkan Masalah Aplikasi Ke Email'),TextSpan(text: ' biluappid@gmail.com ',style: boldTextStyle),TextSpan(text: 'Dengan Mencantumkan Screenshoot Sebagai Bukti Masalah') ])
+                                              ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Tutup'),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                        
+                                },
+                                child: Text(
+                                  'Hubungi Kami',
+                                  style: regularTextStyle.copyWith(
+                                      color: blackcolor, fontSize: 14),
+                                ),
                               ),
                               SizedBox(height: 30),
                               SizedBox(

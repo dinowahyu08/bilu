@@ -6,8 +6,14 @@ plugins {
 
 apply plugin: 'com.google.gms.google-services' // Add Firebase Google Services plugin
 apply plugin: 'com.android.application'
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if(keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))}
+    
 android {
-    namespace = "com.example.bilu2"
+    namespace = "com.bilu.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -23,17 +29,24 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.bilu2"
+        applicationId = "com.bilu.app"
         minSdk = 23
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled true
     }
-
+    signingConfigs {
+        release {
+          keyAlias keystoreProperties['keyAlias']
+          keyPassword keystoreProperties['keyPassword']
+          storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']):null
+          storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug // Configure your release signing
+            signingConfig = signingConfigs.release // Configure your release signing
         }
     }
 }

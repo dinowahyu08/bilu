@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:877381791108:android:915dca9062a108e113c1d1",
+        "mobilesdk_app_id": "1:877381791108:android:23f4f5bb010a0a8b13c1d1",
         "android_client_info": {
-          "package_name": "com.example.bilu2"
+          "package_name": "com.bilu.app"
         }
       },
       "oauth_client": [
@@ -44,9 +44,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:877381791108:android:294cc0787252169613c1d1",
+        "mobilesdk_app_id": "1:877381791108:android:915dca9062a108e113c1d1",
         "android_client_info": {
-          "package_name": "com.example.bilu_admin"
+          "package_name": "com.example.bilu2"
         }
       },
       "oauth_client": [

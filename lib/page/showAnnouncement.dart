@@ -201,7 +201,7 @@ Future<void> showAnnouncementDialog(BuildContext context) async {
   }  
   
   final BannerAd myBanner = BannerAd(  
-    adUnitId: 'ca-app-pub-7987994707204046/2388281224',  
+    adUnitId: 'ca-app-pub-7987994707204046/8889339886',  
     size: AdSize.banner,  
     request: AdRequest(),  
     listener: BannerAdListener(  
@@ -241,7 +241,8 @@ Future<void> showAnnouncementDialog(BuildContext context) async {
                 }  
   
                 if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {  
-                  return Center(child: Text("Tidak ada pengumuman terbaru."));  
+                  return Center(child: Text("Tidak ada pengumuman terbaru."));
+                    
                 }  
   
                 final data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;  

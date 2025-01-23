@@ -276,7 +276,7 @@ class _AdminHomeState extends State<AdminHome> {
 
   void _loadBannerAd() {
     _bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-7987994707204046/9643415718',
+      adUnitId: 'ca-app-pub-7987994707204046/9921288325',
       size: AdSize.leaderboard,
       request: AdRequest(),
       listener: BannerAdListener(
@@ -505,7 +505,7 @@ class _AdminHomeState extends State<AdminHome> {
                           size: 35, // Ukuran ikon
                         ),
                         SizedBox(width: 25), // Jarak antara ikon dan teks
-                        Text("Students",
+                        Text("User Manage",
                             style: boldTextStyle.copyWith(
                                 color: whiteColor, fontSize: 20)),
                       ],

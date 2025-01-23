@@ -978,7 +978,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    return Scaffold(
+    return Scaffold(backgroundColor: whiteColor,
       body: SingleChildScrollView(
         child: Container(
           child: Column(
@@ -1018,6 +1018,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         width: 350,
+                        height: MediaQuery.of(context).size.height,
                         child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
@@ -1072,18 +1073,24 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               SizedBox(height: 30),
                               GestureDetector(
-                                onTap: () {showDialog(context: context, builder: (context) {return AlertDialog(
-          title: Text('Edit Profil'),
-          content: Text('Hubungi tenaga pendidik untuk mengubah profil Anda.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Tutup'),
-            ),
-          ],
-        );});
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Edit Profil'),
+                                          content: Text(
+                                              'Hubungi tenaga pendidik untuk mengubah profil Anda.'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Tutup'),
+                                            ),
+                                          ],
+                                        );
+                                      });
                         
                                 },
                                 child: Text(
@@ -1157,10 +1164,32 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               ),
                               SizedBox(height: 30),
-                              Text(
-                                'Hubungi Kami',
-                                style: regularTextStyle.copyWith(
-                                    color: blackcolor, fontSize: 14),
+                           GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Hubungi Kami'),
+                                          content: Text.rich(TextSpan(children:<TextSpan> [TextSpan(text: 'Laporkan Masalah Aplikasi Ke Email'),TextSpan(text: ' biluappid@gmail.com ',style: boldTextStyle),TextSpan(text: 'Dengan Mencantumkan Screenshoot Sebagai Bukti Masalah') ])
+                                              ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Tutup'),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                        
+                                },
+                                child: Text(
+                                  'Hubungi Kami',
+                                  style: regularTextStyle.copyWith(
+                                      color: blackcolor, fontSize: 14),
+                                ),
                               ),
                               SizedBox(height: 30),
                               SizedBox(

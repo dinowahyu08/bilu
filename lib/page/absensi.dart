@@ -98,8 +98,8 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Date: $formattedDate',
-                    style: TextStyle(fontSize: 16, color: isDarkMode ? Colors.white : Colors.black),
+                    'Tanggal : $formattedDate',
+                    style: boldTextStyle.copyWith(color: blackcolor,fontSize: 16),
                   ),
  Text(
   attendance['status'] == 'Hadir'

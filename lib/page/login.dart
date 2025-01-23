@@ -708,11 +708,11 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 45),
+                SizedBox(height: 25),
                 Text("Login!",
                     style:
                         boldTextStyle.copyWith(color: blueColor, fontSize: 32)),
-                SizedBox(height: 45),
+                SizedBox(height: 35),
                 Container(
                   width: double.infinity,
                   child: Image.asset('assets/images/Ilustrasi (1).png'),

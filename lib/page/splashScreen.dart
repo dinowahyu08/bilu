@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   
   Future<void> loadAd() async {
     await AppOpenAd.load(
-      adUnitId: 'ca-app-pub-7987994707204046/8038997490',
+      adUnitId: 'ca-app-pub-7987994707204046/6048093120',
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(onAdLoaded: (ad) {
         print('Open Ads Is Loaded');

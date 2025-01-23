@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '877381791108',
     projectId: 'bilu-f9a54',
     storageBucket: 'bilu-f9a54.firebasestorage.app',
-    iosBundleId: 'com.example.bilu2',
+    iosBundleId: 'com.bilu.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '877381791108',
     projectId: 'bilu-f9a54',
     storageBucket: 'bilu-f9a54.firebasestorage.app',
-    iosBundleId: 'com.example.bilu2',
+    iosBundleId: 'com.bilu.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

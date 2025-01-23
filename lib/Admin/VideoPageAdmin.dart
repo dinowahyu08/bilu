@@ -195,13 +195,41 @@ class _VideoPageAdminState extends State<VideoPageAdmin> {
       appBar: AppBar(
         backgroundColor: blueColor,
         foregroundColor: whiteColor,
-        title: Text(
-          'Manage Videos',
-          style: boldTextStyle.copyWith(
-            color: whiteColor,
-            fontSize: 24,
-          ),
+        title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Manage Videos',
+              style: boldTextStyle.copyWith(
+                color: whiteColor,
+                fontSize: 24,
+              ),
+            ),
+            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Panduan Key Video'),
+                                          content: Text.rich(TextSpan(children:<TextSpan> [TextSpan(text: 'Cari Video YouTube, Lalu Share Dan Salin Linknya Seperti ini'),TextSpan(text: ' https://youtu.be/1C7fG8F5c2S?si=FXkPAg96IrpFrACc ',style: boldTextStyle),TextSpan(text: 'Perhatikan Key Video Setelah "/" Dan Sebelum "?" Key Videonya https://youtu.be/'),TextSpan(text: ' 1C7fG8F5c2S ',style: boldTextStyle),TextSpan(text: '?si=FXkPAg96IrpFrACc') ])
+                                              ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Tutup'),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                        
+                                },
+                                child: Icon(Icons.info_outline)
+                              ),
+          ],
         ),
+        
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),

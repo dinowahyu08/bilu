@@ -221,13 +221,22 @@ class _MainPageState extends State<MainPage> {
     // Tampilkan indikator loading jika role belum dimuat
     if (_role.isEmpty) {
       return Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+        
+              CircularProgressIndicator(),
+            ],
+          ),
+        )),
+
       );
     }
 
     return Scaffold(
       body: _pages[_selectedIndex], // Menampilkan halaman sesuai dengan indeks yang dipilih
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(backgroundColor: whiteColor,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

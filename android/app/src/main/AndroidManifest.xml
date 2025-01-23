@@ -1,4 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
+package="com.bilu.app">
+    
     <uses-permission android:name="android.permission.INTERNET"/> <!-- Izin akses internet -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -6,9 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
     <application
-        android:label="bilu2"
+        android:label="BILU"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
    
         <activity
             android:name=".MainActivity"
@@ -34,7 +36,7 @@
             android:value="2" />
          <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7987994707204046~4546700380"/>
+            android:value="ca-app-pub-7987994707204046~1329579915"/>
             
     </application>
 

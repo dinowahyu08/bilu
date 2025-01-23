@@ -596,7 +596,12 @@ class _HomeClientState extends State<HomeClient> {
  if (userProvider.isLoading || announcementProvider.isLoading) {
       return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(color: blueColor),
+          child: Column(
+            children: [      Text('Hubungi Admin Sekolah Untuk Menambahkan Akun Anda Ke Sekolah',textAlign:  TextAlign.center,style: boldTextStyle.copyWith(color: blueColor,fontSize: 16),),
+              SizedBox(height: 40,),
+              CircularProgressIndicator(color: blueColor),
+            ],
+          ),
         ),
       );
     }

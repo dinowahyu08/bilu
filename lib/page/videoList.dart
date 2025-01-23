@@ -29,7 +29,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
   void _loadBannerAd() {
     _bannerAd = BannerAd(
       adUnitId:
-          'ca-app-pub-7987994707204046/9817578054', 
+          'ca-app-pub-7987994707204046/3547451662', 
       size: AdSize.banner,
       request: AdRequest(),
       listener: BannerAdListener(

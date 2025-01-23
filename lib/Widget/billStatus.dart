@@ -27,7 +27,7 @@
                 : 'Tidak Ada Tagihan Yang Menunggak',
             style: semiBoldTextStyle.copyWith(
               color: Colors.white,
-              fontSize: 16,
+              fontSize: 14,
             ),
           ),
         ),

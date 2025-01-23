@@ -549,7 +549,11 @@ class _UserManagementState extends State<UserManagement> {
             controller: _nameController,              
             decoration: InputDecoration(labelText: 'Name'),              
           ),              
-          if (_selectedRole == 'student') ...[              
+          if (_selectedRole == 'student') ...[   
+            TextField(    
+              controller: _usernameController,    
+              decoration: InputDecoration(labelText: 'Username'),    
+            ),               
             TextField(              
               controller: _classNameController,              
               decoration: InputDecoration(labelText: 'Class Name'),              
@@ -558,6 +562,7 @@ class _UserManagementState extends State<UserManagement> {
               controller: _photoUrlController,              
               decoration: InputDecoration(labelText: 'Photo URL'),              
             ),              
+            
           ],    
           if (_selectedRole == 'admin') ...[ // Show username field for admin    
             TextField(    
@@ -860,7 +865,34 @@ class _UserManagementState extends State<UserManagement> {
       
     return Scaffold(     backgroundColor: whiteColor,         
       appBar: AppBar(         backgroundColor: Colors.pink, foregroundColor: whiteColor,    
-        title: Text('All Users',style: boldTextStyle.copyWith(fontSize: 24),),              
+        title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('All Users',style: boldTextStyle.copyWith(fontSize: 24),),
+            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Panduan Penambahan Akun'),
+                                          content: Text.rich(TextSpan(children:<TextSpan> [TextSpan(text: 'Untuk akun yang belum ditambahkan sebagai user, hanya menampilkan loading screen. Setelah user mendaftarkan emailnya, harap menyerahkan emailnya ke admin untuk ditambahkan. Untuk Kolom Photo URL Bisa di isi "-" '),TextSpan(text: 'HATI HATI DALAM MENAMBAHKAN, MENGEDIT, DAN MENGHAPUS DATA KARENA AKAN DIHAPUS SECARA PERMANEN',style: regularTextStyle.copyWith(color: Colors.red)) ])
+                                              ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Tutup'),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                        
+                                },
+                                child: Icon(Icons.info_outline)
+                              ),
+          ],
+        ),              
       ),              
       body: userManagementProvider.isLoading              
           ? Center(child: CircularProgressIndicator())              

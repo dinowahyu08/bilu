@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "877381791108",
+    "firebase_url": "https://bilu-f9a54-default-rtdb.firebaseio.com",
+    "project_id": "bilu-f9a54",
+    "storage_bucket": "bilu-f9a54.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877381791108:android:915dca9062a108e113c1d1",
+        "android_client_info": {
+          "package_name": "com.example.bilu2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "877381791108-o6bpubd1hsgmitoppgdm099nmodi0jcd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW4eXnxrk_pI1iiMaL3eJSgQOAsg-gCMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "877381791108-o6bpubd1hsgmitoppgdm099nmodi0jcd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "877381791108-p3ti1mn776dhjp72ed3q4l859hvdna12.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bilu2"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877381791108:android:294cc0787252169613c1d1",
+        "android_client_info": {
+          "package_name": "com.example.bilu_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "877381791108-o6bpubd1hsgmitoppgdm099nmodi0jcd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW4eXnxrk_pI1iiMaL3eJSgQOAsg-gCMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "877381791108-o6bpubd1hsgmitoppgdm099nmodi0jcd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "877381791108-p3ti1mn776dhjp72ed3q4l859hvdna12.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bilu2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
